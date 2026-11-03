@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — SLIIT KandyUni Research</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#f8f7f5;--surface:#fff;--border:#e2e0db;--fg:#1a1917;--fg-muted:#6b6762;--accent:#2563eb;--accent-soft:#dbeafe;--tag-bg:#f1f0ee;--danger:#dc2626;--danger-soft:#fee2e2;--success:#16a34a;--success-soft:#dcfce7;}
+@media(prefers-color-scheme:dark){:root{--bg:#111110;--surface:#1c1b19;--border:#2e2d2a;--fg:#f0ede8;--fg-muted:#888480;--accent:#60a5fa;--accent-soft:#1e3a5f;--tag-bg:#252420;--danger:#f87171;--danger-soft:#3b1515;--success:#4ade80;--success-soft:#14291a;}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.6;}
+
+.site-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;}
+.header-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;gap:16px;}
+.site-title{font-size:.95rem;font-weight:700;}
+.header-nav a{font-size:.85rem;color:var(--fg-muted);padding:6px 12px;border-radius:6px;text-decoration:none;}
+.header-nav a:hover{background:var(--tag-bg);color:var(--fg);}
+
+/* Login screen */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:80vh;padding:24px;}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:36px;width:100%;max-width:380px;display:flex;flex-direction:column;gap:16px;}
+.login-card h2{font-size:1.2rem;font-weight:700;}
+.login-card p{color:var(--fg-muted);font-size:.875rem;}
+.login-error{color:var(--danger);font-size:.85rem;}
+
+/* Form elements */
+label{font-size:.85rem;font-weight:600;display:block;margin-bottom:4px;}
+input[type=text],input[type=email],input[type=password],select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 13px;font-size:.875rem;color:var(--fg);outline:none;font-family:inherit;transition:border-color .15s;}
+input:focus,select:focus{border-color:var(--accent);}
+input::placeholder{color:var(--fg-muted);}
+.btn{padding:9px 18px;border-radius:8px;font-size:.875rem;font-weight:600;cursor:pointer;border:none;transition:opacity .15s;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{opacity:.85;}
+.btn-ghost{background:var(--tag-bg);color:var(--fg);}
+.btn-ghost:hover{background:var(--border);}
+.btn-danger{background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger);}
+.btn-danger:hover{opacity:.8;}
+.btn-sm{padding:5px 12px;font-size:.78rem;}
+
+/* Admin layout */
+#adminScreen{display:none;max-width:900px;margin:0 auto;padding:28px 24px 64px;}
+.section-heading{font-size:1rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+
+/* Add member form */
+.add-form{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:28px;display:flex;flex-direction:column;gap:14px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;}
+.hint{font-size:.78rem;color:var(--fg-muted);}
+
+/* Members table */
+.members-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.members-table th{background:var(--tag-bg);font-size:.78rem;font-weight:600;text-align:left;padding:10px 14px;color:var(--fg-muted);border-bottom:1px solid var(--border);}
+.members-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:.85rem;vertical-align:middle;}
+.members-table tr:last-child td{border-bottom:none;}
+.members-table tr:hover td{background:var(--tag-bg);}
+.sync-status{font-size:.75rem;color:var(--fg-muted);}
+.sync-ok{color:var(--success);}
+.actions-cell{display:flex;gap:6px;align-items:center;}
+
+/* Status messages */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:.85rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;transition:opacity .3s;}
+.toast.success{border-color:var(--success);color:var(--success);}
+.toast.error{border-color:var(--danger);color:var(--danger);}
+
+.spinner-sm{width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.empty-row td{text-align:center;color:var(--fg-muted);padding:32px;}
+@media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-title">SLIIT KandyUni — Admin</div>
+    <nav class="header-nav">
+      <a href="index.html">← Public Site</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Login -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div>
+      <h2>Admin Login</h2>
+      <p>SLIIT KandyUni Research Portal</p>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="pwInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div id="loginError" class="login-error" hidden></div>
+    <button class="btn btn-primary" onclick="doLogin()">Login</button>
+  </div>
+</div>
+
+<!-- Admin panel -->
+<div id="adminScreen">
+  <div class="section-heading">
+    Add Staff Member
+  </div>
+  <div class="add-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="fName" placeholder="Dr. Jane Smith">
+      </div>
+      <div class="form-group">
+        <label>OpenAlex ID *</label>
+        <input type="text" id="fOaId" placeholder="A5056029451">
+        <div class="hint">From openalex.org/authors/Axxxxxxx</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="fTitle" placeholder="Senior Lecturer">
+      </div>
+      <div class="form-group">
+        <label>Department</label>
+        <input type="text" id="fDept" placeholder="Computer Science">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="fEmail" placeholder="name@sliit.lk">
+      </div>
+      <div class="form-group">
+        <label>ORCID (optional)</label>
+        <input type="text" id="fOrcid" placeholder="https://orcid.org/0000-0000-0000-0000">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
+      <button class="btn btn-primary" onclick="addMember()" id="addBtn">Add Member & Sync</button>
+    </div>
+  </div>
+
+  <div class="section-heading">
+    Staff Members
+    <button class="btn btn-ghost btn-sm" onclick="syncAll()" id="syncAllBtn">Sync All from OpenAlex</button>
+  </div>
+  <table class="members-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Department</th>
+        <th>OpenAlex ID</th>
+        <th>Publications</th>
+        <th>Last Synced</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="membersTbody"></tbody>
+  </table>
+</div>
+
+<div class="toast" id="toast" style="display:none"></div>
+
+<script>
+// Simple password check (SHA-256 of "admin123")
+const PASS_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831d7d5a76c5c7a19ab73c2d9';
+let members = [];
+let isLoggedIn = false;
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function doLogin() {
+  const pw = document.getElementById('pwInput').value;
+  const hash = await sha256(pw);
+  if (hash === PASS_HASH) {
+    sessionStorage.setItem('admin_auth', '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminScreen').style.display = 'block';
+    isLoggedIn = true;
+    loadMembers();
+  } else {
+    const err = document.getElementById('loginError');
+    err.textContent = 'Incorrect password.';
+    err.hidden = false;
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('admin_auth');
+  location.reload();
+}
+
+function toast(msg, type='success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast ${type}`;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+async function loadMembers() {
+  try {
+    const r = await fetch('data/members.json?_=' + Date.now());
+    members = await r.json();
+  } catch(e) { members = []; }
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('membersTbody');
+  if (!members.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No staff members yet. Add one above.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = members.map((m,i) => `
+    <tr>
+      <td><strong>${esc(m.name)}</strong><br><small style="color:var(--fg-muted)">${esc(m.email||'')}</small></td>
+      <td>${esc(m.department||'—')}</td>
+      <td style="font-family:monospace;font-size:.78rem">${esc(m.openalex_id||'—')}</td>
+      <td>${m.works_count != null ? m.works_count : '—'}</td>
+      <td><span class="sync-status ${m.last_synced?'sync-ok':''}">${m.last_synced ? new Date(m.last_synced).toLocaleDateString() : 'Never'}</span></td>
+      <td><div class="actions-cell">
+        <button class="btn btn-ghost btn-sm" onclick="syncOne(${i})">Sync</button>
+        <a class="btn btn-ghost btn-sm" href="member.html?id=${m.id}" target="_blank">View</a>
+        <button class="btn btn-danger btn-sm" onclick="removeMember(${i})">Remove</button>
+      </div></td>
+    </tr>
+  `).join('');
+}
+
+function clearForm() {
+  ['fName','fOaId','fTitle','fDept','fEmail','fOrcid'].forEach(id => document.getElementById(id).value = '');
+}
+
+function genId(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '-' + Date.now().toString(36);
+}
+
+async function addMember() {
+  const name = document.getElementById('fName').value.trim();
+  const oaId = document.getElementById('fOaId').value.trim().replace(/.*\//, ''); // strip URL if pasted
+  if (!name || !oaId) { toast('Name and OpenAlex ID are required.', 'error'); return; }
+
+  const btn = document.getElementById('addBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-sm"></span> Syncing…';
+
+  const member = {
+    id: genId(name),
+    name,
+    openalex_id: oaId,
+    title: document.getElementById('fTitle').value.trim(),
+    department: document.getElementById('fDept').value.trim(),
+    email: document.getElementById('fEmail').value.trim(),
+    orcid: document.getElementById('fOrcid').value.trim() || null,
+    last_synced: null,
+    works_count: null,
+    cited_by_count: null,
+    h_index: null
+  };
+
+  // Fetch basic stats from OpenAlex
+  try {
+    const r = await fetch(`https://api.openalex.org/authors/${oaId}?mailto=research@sliit.lk`);
+    if (r.ok) {
+      const data = await r.json();
+      member.works_count = data.works_count;
+      member.cited_by_count = data.cited_by_count;
+      member.h_index = data.summary_stats?.h_index;
+      member.display_name_from_api = data.display_name;
+      member.last_synced = new Date().toISOString();
+    }
+  } catch(e) {}
+
+  members.push(member);
+  saveMembers();
+  renderTable();
+  clearForm();
+  btn.disabled = false;
+  btn.textContent = 'Add Member & Sync';
+  toast(`${name} added successfully!`);
+}
+
+async function syncOne(idx) {
+  const m = members[idx];
+  if (!m.openalex_id) { toast('No OpenAlex ID set.', 'error'); return; }
+  try {
+    const r = await fetch(`https://api.openalex.org/authors/${m.openalex_id}?mailto=research@sliit.lk`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    members[idx].works_count = data.works_count;
+    members[idx].cited_by_count = data.cited_by_count;
+    members[idx].h_index = data.summary_stats?.h_index;
+    members[idx].last_synced = new Date().toISOString();
+    saveMembers();
+    renderTable();
+    toast(`${m.name} synced!`);
+  } catch(e) {
+    toast('Sync failed: ' + e.message, 'error');
+  }
+}
+
+async function syncAll() {
+  const btn = document.getElementById('syncAllBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-sm"></span> Syncing…';
+  let count = 0;
+  for (let i = 0; i < members.length; i++) {
+    if (members[i].openalex_id) {
+      try {
+        const r = await fetch(`https://api.openalex.org/authors/${members[i].openalex_id}?mailto=research@sliit.lk`);
+        if (r.ok) {
+          const data = await r.json();
+          members[i].works_count = data.works_count;
+          members[i].cited_by_count = data.cited_by_count;
+          members[i].h_index = data.summary_stats?.h_index;
+          members[i].last_synced = new Date().toISOString();
+          count++;
+        }
+      } catch(e) {}
+      await new Promise(r => setTimeout(r, 300)); // rate limit friendly
+    }
+  }
+  saveMembers();
+  renderTable();
+  btn.disabled = false;
+  btn.textContent = 'Sync All from OpenAlex';
+  toast(`${count} member(s) synced!`);
+}
+
+function removeMember(idx) {
+  if (!confirm(`Remove ${members[idx].name}? This cannot be undone.`)) return;
+  members.splice(idx, 1);
+  saveMembers();
+  renderTable();
+  toast('Member removed.');
+}
+
+function saveMembers() {
+  // Save to localStorage as backup (actual persistence needs GitHub API or manual download)
+  localStorage.setItem('sliit_members', JSON.stringify(members));
+  downloadMembersJson();
+}
+
+function downloadMembersJson() {
+  // Auto-download updated members.json so admin can commit it to the repo
+  const blob = new Blob([JSON.stringify(members, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'members.json';
+  a.click();
+  showCommitInstructions();
+}
+
+function showCommitInstructions() {
+  const existing = document.getElementById('commitInstructions');
+  if (existing) return;
+  const div = document.createElement('div');
+  div.id = 'commitInstructions';
+  div.style.cssText = 'background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:14px 18px;margin-top:20px;font-size:.85rem;line-height:1.6;';
+  div.innerHTML = `<strong>📥 members.json downloaded!</strong><br>
+    To save permanently: go to your GitHub repo → <code>data/members.json</code> → Edit → paste this file's content → Commit.
+    Or drag the downloaded file into the GitHub repo's <code>data/</code> folder.`;
+  document.getElementById('adminScreen').appendChild(div);
+  setTimeout(() => div.remove(), 15000);
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Check auth on load
+window.addEventListener('load', () => {
+  if (sessionStorage.getItem('admin_auth') === '1') {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminScreen').style.display = 'block';
+    isLoggedIn = true;
+    loadMembers();
+  }
+  // Load from localStorage if available (offline persistence)
+  const cached = localStorage.getItem('sliit_members');
+  if (cached) {
+    try { members = JSON.parse(cached); } catch(e) {}
+  }
+});
+</script>
+</body>
+</html>
