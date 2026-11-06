@@ -82,5 +82,19 @@
     "cited_by_count": 4,
     "h_index": 1,
     "display_name_from_api": "Chathuni Thilakarathne"
+  },
+  {
+    "id": "kaushalya-premarathne-mw5cv6ml",
+    "name": "Kaushalya Premarathne",
+    "openalex_id": "A5009855763",
+    "title": "Assistant Lecturer",
+    "department": "Computing",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-06T19:16:27.257Z",
+    "works_count": 3,
+    "cited_by_count": 6,
+    "h_index": 2,
+    "display_name_from_api": "Kaushalya Premarathne"
   }
 ]
