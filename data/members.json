@@ -4,8 +4,22 @@
     "name": "Demo Staff Member",
     "openalex_id": "A5056029451",
     "email": "demo@sliit.lk",
-    "department": "Computer Science",
+    "department": "Computing",
     "title": "Senior Lecturer",
     "last_synced": null
+  },
+  {
+    "id": "janaka-alawatugoda-mw4qjlh5",
+    "name": "Janaka Alawatugoda",
+    "openalex_id": "A5056029451",
+    "title": "",
+    "department": "",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-06T08:51:36.253Z",
+    "works_count": 60,
+    "cited_by_count": 612,
+    "h_index": 12,
+    "display_name_from_api": "Janaka Alawatugoda"
   }
 ]
