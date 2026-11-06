@@ -1,14 +1,5 @@
 [
   {
-    "id": "demo-001",
-    "name": "Janaka Alawatugoda",
-    "openalex_id": "A5056029451",
-    "email": "janaka.a@kandyuni.lk",
-    "department": "Computing",
-    "title": "Senior Lecturer",
-    "last_synced": null
-  },
-  {
     "id": "janaka-alawatugoda-mw4qjlh5",
     "name": "Janaka Alawatugoda",
     "openalex_id": "A5056029451",
@@ -16,10 +7,38 @@
     "department": "",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-06T08:51:36.253Z",
+    "last_synced": "2026-11-06T08:54:46.147Z",
     "works_count": 60,
     "cited_by_count": 612,
     "h_index": 12,
     "display_name_from_api": "Janaka Alawatugoda"
+  },
+  {
+    "id": "madhawa-herath-mw4qkvkp",
+    "name": "Madhawa Herath",
+    "openalex_id": "A5002542591",
+    "title": "",
+    "department": "",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-06T08:52:34.203Z",
+    "works_count": 15,
+    "cited_by_count": 127,
+    "h_index": 6,
+    "display_name_from_api": "Madhawa Herath"
+  },
+  {
+    "id": "chathurika-koswatte-mw4qln4a",
+    "name": "Chathurika Koswatte",
+    "openalex_id": "A5071577699",
+    "title": "",
+    "department": "",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-06T08:53:09.757Z",
+    "works_count": 13,
+    "cited_by_count": 71,
+    "h_index": 5,
+    "display_name_from_api": "Koswatte R. C. Koswatte"
   }
 ]
