@@ -1,1 +1,16 @@
-[ ]
+[
+  {
+    "id": "janaka-alawatugoda-mw6u6qm5",
+    "name": "Janaka Alawatugoda",
+    "openalex_id": "A5056029451",
+    "title": "Assistant Professor",
+    "department": "Computing",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-07T20:09:05.626Z",
+    "works_count": 60,
+    "cited_by_count": 648,
+    "h_index": 13,
+    "display_name_from_api": "Janaka Alawatugoda"
+  }
+]
