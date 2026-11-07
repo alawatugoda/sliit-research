@@ -215,8 +215,8 @@ async function init() {
 }
 
 async function fetchAllWorks(oaId) {
-  // Filter to journal-article and proceedings-article directly in API
-  const baseUrl = `https://api.openalex.org/works?filter=author.id:${oaId},type:journal-article|proceedings-article&per-page=200&mailto=research@sliit.lk`;
+  // Fetch all works; filter by type client-side to avoid API pipe-syntax issues
+  const baseUrl = `https://api.openalex.org/works?filter=author.id:${oaId}&per-page=100&select=id,display_name,publication_year,type,primary_location,cited_by_count,doi,authorships,biblio,open_access&mailto=research@sliit.lk`;
   let page = 1, results = [];
   while(true) {
     const r = await fetch(`${baseUrl}&page=${page}`);
