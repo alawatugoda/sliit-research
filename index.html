@@ -67,23 +67,6 @@ a{color:inherit;text-decoration:none;}
 .group-header:first-child{border-top:none;margin-top:0;padding-top:4px;}
 .group-count{background:var(--tag-bg);border-radius:10px;padding:1px 8px;font-size:.75rem;font-weight:600;color:var(--fg-muted);margin-left:6px;text-transform:none;letter-spacing:0;}
 
-/* Year view */
-.year-section{margin-top:28px;}
-.year-heading{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--border);}
-.year-label{font-size:1.3rem;font-weight:700;}
-.year-pill{font-size:.78rem;background:var(--tag-bg);padding:3px 10px;border-radius:12px;color:var(--fg-muted);}
-.year-pill-j{font-size:.78rem;background:var(--journal-bg);color:var(--journal);padding:3px 10px;border-radius:12px;font-weight:600;}
-.year-pill-c{font-size:.78rem;background:var(--conf-bg);color:var(--conf);padding:3px 10px;border-radius:12px;font-weight:600;}
-.year-pub-list{display:flex;flex-direction:column;gap:10px;}
-.ypub-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:14px 18px;display:flex;flex-direction:column;gap:6px;}
-.ypub-title{font-weight:600;font-size:.9rem;line-height:1.35;}
-.ypub-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
-.type-badge-j{font-size:.75rem;background:var(--journal-bg);color:var(--journal);padding:2px 8px;border-radius:5px;font-weight:600;}
-.type-badge-c{font-size:.75rem;background:var(--conf-bg);color:var(--conf);padding:2px 8px;border-radius:5px;font-weight:600;}
-.ypub-venue{font-size:.8rem;color:var(--fg-muted);font-style:italic;}
-.ypub-authors{font-size:.78rem;color:var(--fg-muted);}
-.ypub-doi{font-size:.75rem;color:var(--accent);}
-.year-load-note{font-size:.82rem;color:var(--fg-muted);text-align:center;padding:16px;background:var(--tag-bg);border-radius:8px;margin-top:8px;}
 
 .spinner-inline{display:inline-block;width:14px;height:14px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -113,7 +96,6 @@ a{color:inherit;text-decoration:none;}
 <div class="tab-wrap">
   <div class="tab-inner">
     <div class="tab active" id="tab-staff" onclick="switchTab('staff')">By Staff</div>
-    <div class="tab" id="tab-year" onclick="switchTab('year')">By Year</div>
   </div>
 </div>
 
@@ -131,10 +113,6 @@ a{color:inherit;text-decoration:none;}
     <div class="grid" id="memberGrid"></div>
   </div>
 
-  <!-- Year tab -->
-  <div id="yearTab" style="display:none">
-    <div id="yearContent"><p style="color:var(--fg-muted);padding:20px 0">Loading publication data…</p></div>
-  </div>
 </div>
 
 <script>
@@ -142,7 +120,6 @@ const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 
 let members = [];
 let currentTab = 'staff';
-let yearDataLoaded = false;
 
 // ── Init ──────────────────────────────────────────────────────────
 async function loadMembers() {
@@ -245,67 +222,9 @@ function renderGrid(list) {
 function switchTab(tab) {
   currentTab = tab;
   document.getElementById('tab-staff').classList.toggle('active', tab === 'staff');
-  document.getElementById('tab-year').classList.toggle('active', tab === 'year');
   document.getElementById('staffControls').style.display = tab === 'staff' ? '' : 'none';
-  document.getElementById('yearTab').style.display = tab === 'year' ? '' : 'none';
-  if (tab === 'year' && !yearDataLoaded) loadYearView();
 }
 
-// ── Year view ─────────────────────────────────────────────────────
-// No API calls — shows staff members who have publications, grouped by active year range.
-// User selects a year → sees which members were active that year → clicks member → member page.
-
-function loadYearView() {
-  yearDataLoaded = true;
-  const container = document.getElementById('yearContent');
-
-  const withId = members.filter(m => m.openalex_id);
-  if (!withId.length) {
-    container.innerHTML = `<p style="color:var(--fg-muted);padding:20px 0">No members with publication data yet.</p>`;
-    return;
-  }
-
-  // Build year selector from known publication years in members.json (updated_date as proxy)
-  // We show all members with OpenAlex IDs — user picks a year to filter
-  const currentYear = new Date().getFullYear();
-  const years = [];
-  for (let y = currentYear; y >= 2000; y--) years.push(y);
-
-  container.innerHTML = `
-    <div style="margin:20px 0 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <label style="font-size:.88rem;color:var(--fg-muted);font-weight:600;">Select year:</label>
-      <select id="yearSelect" onchange="renderYearMembers()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:.88rem;color:var(--fg);cursor:pointer;outline:none;">
-        <option value="">— choose a year —</option>
-        ${years.map(y => `<option value="${y}">${y}</option>`).join('')}
-      </select>
-      <span style="font-size:.82rem;color:var(--fg-muted)">${withId.length} staff members with publication data</span>
-    </div>
-    <div id="yearMemberList"></div>`;
-}
-
-function renderYearMembers() {
-  const year = parseInt(document.getElementById('yearSelect').value);
-  const list = document.getElementById('yearMemberList');
-  if (!year) { list.innerHTML = ''; return; }
-
-  const withId = members.filter(m => m.openalex_id);
-
-  list.innerHTML = `
-    <p style="font-size:.82rem;color:var(--fg-muted);margin-bottom:16px;">
-      Staff members active in <strong>${year}</strong> — click a name to view their publications for that year.
-    </p>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      ${withId.map(m => `
-        <a href="member.html?id=${m.id}&year=${year}" style="display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;text-decoration:none;color:inherit;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-          <div style="width:40px;height:40px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:var(--accent);flex-shrink:0">${initials(m.name)}</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-weight:600;font-size:.95rem">${esc(m.name)}</div>
-            <div style="font-size:.8rem;color:var(--fg-muted)">${esc(m.title||'')}${m.department ? ' · ' + esc(m.department) : ''}</div>
-          </div>
-          <div style="font-size:.82rem;color:var(--accent);font-weight:600;white-space:nowrap">View ${year} papers →</div>
-        </a>`).join('')}
-    </div>`;
-}
 
 
 loadMembers();
