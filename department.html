@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Computing — SLIIT KandyUni Research</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#f8f7f5;--surface:#fff;--border:#e2e0db;--fg:#1a1917;--fg-muted:#6b6762;--accent:#2563eb;--accent-soft:#dbeafe;--tag-bg:#f1f0ee;--code-bg:#f4f3f1;--journal:#065f46;--journal-bg:#d1fae5;--conf:#7c3aed;--conf-bg:#ede9fe;}
+@media(prefers-color-scheme:dark){:root{--bg:#111110;--surface:#1c1b19;--border:#2e2d2a;--fg:#f0ede8;--fg-muted:#888480;--accent:#60a5fa;--accent-soft:#1e3a5f;--tag-bg:#252420;--code-bg:#1a1917;--journal:#34d399;--journal-bg:#064e3b;--conf:#a78bfa;--conf-bg:#3b1f6e;}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.6;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+
+.site-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;height:56px;}
+.back-link{font-size:.85rem;color:var(--fg-muted);padding:6px 10px;border-radius:6px;transition:background .15s;}
+.back-link:hover{background:var(--tag-bg);color:var(--fg);text-decoration:none;}
+.site-name{font-size:.9rem;color:var(--fg-muted);}
+
+.hero{background:var(--surface);border-bottom:1px solid var(--border);padding:32px 24px;}
+.hero-inner{max-width:1100px;margin:0 auto;}
+.hero h1{font-size:1.6rem;font-weight:700;}
+.hero p{color:var(--fg-muted);margin-top:4px;font-size:.9rem;}
+.hero-stats{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap;}
+.hstat{display:flex;flex-direction:column;}
+.hstat-val{font-size:1.5rem;font-weight:700;line-height:1.1;}
+.hstat-lbl{font-size:.75rem;color:var(--fg-muted);}
+
+.tab-wrap{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;}
+.tab-inner{max-width:1100px;margin:0 auto;display:flex;gap:4px;}
+.tab{padding:12px 18px;font-size:.88rem;font-weight:600;color:var(--fg-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;}
+.tab:hover{color:var(--fg);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+.content-wrap{max-width:1100px;margin:0 auto;padding:24px 24px 64px;}
+
+/* Filter bar */
+.filter-bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;align-items:center;}
+.filter-select{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.85rem;color:var(--fg);cursor:pointer;outline:none;}
+.type-btn{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px 13px;font-size:.82rem;font-weight:600;color:var(--fg-muted);cursor:pointer;transition:all .15s;}
+.type-btn:hover{background:var(--tag-bg);}
+.type-btn.active-j{background:var(--journal-bg);color:var(--journal);border-color:var(--journal);}
+.type-btn.active-c{background:var(--conf-bg);color:var(--conf);border-color:var(--conf);}
+.type-btn.active-all{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);}
+.pub-count{font-size:.85rem;color:var(--fg-muted);}
+.export-group{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;}
+.export-btn{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px 13px;font-size:.8rem;font-weight:600;color:var(--fg-muted);cursor:pointer;transition:background .15s,color .15s;}
+.export-btn:hover{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);}
+
+/* Member chips */
+.member-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.chip{padding:5px 12px;border-radius:20px;font-size:.78rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--fg-muted);transition:all .15s;}
+.chip:hover{border-color:var(--accent);color:var(--accent);}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.chip-all{background:var(--tag-bg);}
+.chip-all.active{background:var(--accent);}
+
+/* Pub cards */
+.pub-list{display:flex;flex-direction:column;gap:12px;}
+.pub-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:8px;}
+.pub-title{font-weight:600;font-size:.95rem;line-height:1.35;}
+.pub-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.pub-year{font-size:.8rem;background:var(--tag-bg);padding:2px 8px;border-radius:5px;color:var(--fg-muted);font-weight:600;}
+.type-badge-j{font-size:.78rem;background:var(--journal-bg);color:var(--journal);padding:2px 8px;border-radius:5px;font-weight:600;}
+.type-badge-c{font-size:.78rem;background:var(--conf-bg);color:var(--conf);padding:2px 8px;border-radius:5px;font-weight:600;}
+.pub-oa{font-size:.78rem;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:5px;font-weight:600;}
+.pub-venue{font-size:.82rem;color:var(--fg-muted);font-style:italic;}
+.pub-authors{font-size:.8rem;color:var(--fg-muted);}
+.pub-footer{display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid var(--border);flex-wrap:wrap;gap:6px;}
+.pub-cite-count{font-size:.8rem;color:var(--fg-muted);}
+.pub-links{display:flex;gap:10px;}
+.pub-link{font-size:.78rem;color:var(--accent);font-weight:500;}
+
+/* Year view */
+.year-section{margin-bottom:32px;}
+.year-heading{font-size:1.1rem;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
+.year-pill{font-size:.78rem;background:var(--tag-bg);padding:3px 10px;border-radius:12px;color:var(--fg-muted);font-weight:500;}
+
+/* Venue */
+.venue-section{margin-bottom:28px;}
+.venue-header{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;cursor:pointer;user-select:none;}
+.venue-name{font-weight:600;font-size:.95rem;}
+.venue-count{font-size:.78rem;color:var(--fg-muted);background:var(--tag-bg);padding:2px 8px;border-radius:5px;}
+.venue-toggle{font-size:.78rem;color:var(--fg-muted);margin-left:auto;}
+.venue-papers{display:flex;flex-direction:column;gap:8px;padding-left:16px;border-left:2px solid var(--border);}
+.venue-paper{padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;}
+.venue-paper-title{font-size:.88rem;font-weight:600;line-height:1.3;}
+.venue-paper-meta{font-size:.78rem;color:var(--fg-muted);margin-top:4px;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:640px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-title{font-weight:700;font-size:1rem;}
+.modal-close{background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--fg-muted);padding:4px 8px;}
+.modal-body{padding:16px 20px;overflow-y:auto;flex:1;}
+.modal-pre{background:var(--code-bg);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:.73rem;white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+.btn{padding:8px 18px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{opacity:.85;}
+.btn-ghost{background:var(--tag-bg);color:var(--fg);}
+
+.spinner{width:18px;height:18px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;margin:60px auto;display:block;}
+.spinner-sm{display:inline-block;width:12px;height:12px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-left:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.error-msg{color:#dc2626;text-align:center;padding:32px;}
+@media(prefers-color-scheme:dark){.error-msg{color:#f87171;}}
+@media(max-width:640px){.filter-bar{flex-direction:column;align-items:stretch;}.export-group{margin-left:0;}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="back-link" href="index.html">← All Staff</a>
+    <span class="site-name">SLIIT KandyUni Research</span>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <h1>Department of Computing</h1>
+    <p>All research publications by Computing department staff, via OpenAlex.</p>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-val" id="statTotal">—</div><div class="hstat-lbl">Total Papers</div></div>
+      <div class="hstat"><div class="hstat-val" id="statJournal">—</div><div class="hstat-lbl">Journal Articles</div></div>
+      <div class="hstat"><div class="hstat-val" id="statConf">—</div><div class="hstat-lbl">Conference Papers</div></div>
+      <div class="hstat"><div class="hstat-val" id="statCites">—</div><div class="hstat-lbl">Total Citations</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-wrap">
+  <div class="tab-inner">
+    <div class="tab active" id="tab-list" onclick="switchTab('list')">All Publications</div>
+    <div class="tab" id="tab-year" onclick="switchTab('year')">By Year</div>
+    <div class="tab" id="tab-journals" onclick="switchTab('journals')">Journals</div>
+    <div class="tab" id="tab-conferences" onclick="switchTab('conferences')">Conferences</div>
+  </div>
+</div>
+
+<div class="content-wrap">
+  <div id="loadingArea"><div class="spinner"></div><p id="loadMsg" style="text-align:center;color:var(--fg-muted);font-size:.88rem;margin-top:-32px"></p></div>
+  <div id="mainArea" style="display:none">
+    <!-- Member chips -->
+    <div class="member-chips" id="memberChips"></div>
+    <!-- Filter bar -->
+    <div class="filter-bar" id="filterBar">
+      <button class="type-btn active-all" id="btn-all" onclick="setType('all')">All</button>
+      <button class="type-btn" id="btn-j" onclick="setType('journal')">📄 Journals</button>
+      <button class="type-btn" id="btn-c" onclick="setType('conference')">🎤 Conferences</button>
+      <select class="filter-select" id="fromYear" onchange="applyFilters()">
+        <option value="">From Year</option>
+      </select>
+      <span style="color:var(--fg-muted);font-size:.85rem">→</span>
+      <select class="filter-select" id="toYear" onchange="applyFilters()">
+        <option value="">To Year</option>
+      </select>
+      <span class="pub-count" id="pubCount"></span>
+      <div class="export-group">
+        <button class="export-btn" onclick="exportAs('bibtex')">BibTeX</button>
+        <button class="export-btn" onclick="exportAs('apa')">APA</button>
+        <button class="export-btn" onclick="exportAs('ieee')">IEEE</button>
+        <button class="export-btn" onclick="exportAs('csv')">CSV</button>
+      </div>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+
+<!-- Export modal -->
+<div class="modal-overlay" id="exportModal" style="display:none" onclick="if(event.target.id==='exportModal')closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Export</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body"><pre class="modal-pre" id="modalContent"></pre></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+      <button class="btn btn-primary" onclick="copyExport()">Copy</button>
+      <button class="btn btn-primary" onclick="downloadExport()">Download</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+const API_KEY = 'w0kxNmNub5piF2PcfVwHpd';
+const CACHE_TTL = 24 * 60 * 60 * 1000;
+
+function cacheGet(key) {
+  try {
+    const raw = localStorage.getItem('oa_' + key);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) { localStorage.removeItem('oa_' + key); return null; }
+    return data;
+  } catch { return null; }
+}
+function cacheSet(key, data) {
+  try { localStorage.setItem('oa_' + key, JSON.stringify({ ts: Date.now(), data })); } catch {}
+}
+
+function classifyWork(w) {
+  const t = (w.type || '').toLowerCase();
+  if (t === 'journal-article' || t === 'article') return 'journal';
+  if (t === 'proceedings-article' || t === 'conference-paper') return 'conference';
+  return 'other';
+}
+
+let allMembers = [];
+let allWorks = [];      // all fetched works (journal+conf only)
+let filteredWorks = []; // after member + type + year filter
+let typeFilter = 'all';
+let memberFilter = 'all'; // 'all' or member id
+let currentTab = 'list';
+let currentExportContent = '';
+let currentExportFmt = 'bibtex';
+
+async function fetchWithRetry(url) {
+  const delays = [3000, 8000, 15000];
+  for (let i = 0; i <= delays.length; i++) {
+    if (i > 0) await sleep(delays[i-1]);
+    try {
+      const r = await fetch(url);
+      if (r.status === 429) {
+        const ra = r.headers.get('Retry-After');
+        if (ra) await sleep(parseInt(ra) * 1000);
+        continue;
+      }
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    } catch(e) { if (i === delays.length) throw e; }
+  }
+  throw new Error('429');
+}
+
+async function fetchMemberWorks(oaId) {
+  const cached = cacheGet(oaId);
+  if (cached) return cached;
+  const base = `https://api.openalex.org/works?filter=author.id:${oaId}&per-page=50&select=id,display_name,publication_year,type,primary_location,cited_by_count,doi,authorships,biblio,open_access&api_key=${API_KEY}`;
+  let page = 1, results = [];
+  await sleep(200);
+  while (true) {
+    const data = await fetchWithRetry(`${base}&page=${page}`);
+    results = results.concat(data.results || []);
+    if (results.length >= (data.meta?.count || 0) || !(data.results?.length)) break;
+    page++; if (page > 20) break;
+    await sleep(200);
+  }
+  cacheSet(oaId, results);
+  return results;
+}
+
+async function init() {
+  // Load members
+  try {
+    const r = await fetch('data/members.json?_=' + Date.now());
+    allMembers = await r.json();
+  } catch(e) { document.getElementById('loadingArea').innerHTML = '<div class="error-msg">Could not load members data.</div>'; return; }
+
+  const withId = allMembers.filter(m => m.openalex_id && m.department === 'Computing');
+
+  // Fetch publications sequentially
+  const memberWorks = {}; // oaId → works[]
+  for (let i = 0; i < withId.length; i++) {
+    const m = withId[i];
+    document.getElementById('loadMsg').textContent = `Loading ${m.name}… (${i+1}/${withId.length})`;
+    try {
+      const works = await fetchMemberWorks(m.openalex_id);
+      memberWorks[m.openalex_id] = works.filter(w => classifyWork(w) !== 'other');
+    } catch(e) { memberWorks[m.openalex_id] = []; }
+    if (i < withId.length - 1) await sleep(300);
+  }
+
+  // Merge + deduplicate by OpenAlex ID, tag each work with member info
+  const seen = new Set();
+  allWorks = [];
+  withId.forEach(m => {
+    (memberWorks[m.openalex_id] || []).forEach(w => {
+      if (!seen.has(w.id)) {
+        seen.add(w.id);
+        w._member = m; // tag with primary author (first found)
+        allWorks.push(w);
+      }
+    });
+  });
+
+  allWorks.sort((a, b) => (b.publication_year || 0) - (a.publication_year || 0));
+
+  buildYearFilter();
+  buildMemberChips(withId);
+  updateHeroStats();
+  applyFilters();
+
+  document.getElementById('loadingArea').style.display = 'none';
+  document.getElementById('mainArea').style.display = '';
+}
+
+function buildYearFilter() {
+  const years = [...new Set(allWorks.map(w => w.publication_year).filter(Boolean))].sort((a,b) => a - b);
+  ['fromYear','toYear'].forEach(id => {
+    const sel = document.getElementById(id);
+    while (sel.options.length > 1) sel.remove(1);
+    const ordered = id === 'fromYear' ? years : [...years].reverse();
+    ordered.forEach(y => { const o = document.createElement('option'); o.value = y; o.textContent = y; sel.appendChild(o); });
+  });
+}
+
+function buildMemberChips(members) {
+  const wrap = document.getElementById('memberChips');
+  wrap.innerHTML = `<span class="chip chip-all active" onclick="setMember('all')">All Members</span>` +
+    members.map(m => `<span class="chip" id="chip-${m.id}" onclick="setMember('${m.id}')">${esc(m.name.split(' ')[0])}</span>`).join('');
+}
+
+function updateHeroStats() {
+  const jCount = allWorks.filter(w => classifyWork(w) === 'journal').length;
+  const cCount = allWorks.filter(w => classifyWork(w) === 'conference').length;
+  const totalCites = allWorks.reduce((s, w) => s + (w.cited_by_count || 0), 0);
+  document.getElementById('statTotal').textContent = allWorks.length;
+  document.getElementById('statJournal').textContent = jCount;
+  document.getElementById('statConf').textContent = cCount;
+  document.getElementById('statCites').textContent = totalCites.toLocaleString();
+}
+
+function setMember(id) {
+  memberFilter = id;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  document.querySelector(id === 'all' ? '.chip-all' : `#chip-${id}`)?.classList.add('active');
+  applyFilters();
+}
+
+function setType(t) {
+  typeFilter = t;
+  ['all','j','c'].forEach(k => { document.getElementById('btn-'+k).className = 'type-btn'; });
+  if (t === 'all') document.getElementById('btn-all').classList.add('active-all');
+  else if (t === 'journal') document.getElementById('btn-j').classList.add('active-j');
+  else if (t === 'conference') document.getElementById('btn-c').classList.add('active-c');
+  applyFilters();
+}
+
+function applyFilters() {
+  const from = parseInt(document.getElementById('fromYear').value) || 0;
+  const to = parseInt(document.getElementById('toYear').value) || 9999;
+  filteredWorks = allWorks.filter(w => {
+    if (memberFilter !== 'all' && w._member?.id !== memberFilter) return false;
+    if (typeFilter === 'journal' && classifyWork(w) !== 'journal') return false;
+    if (typeFilter === 'conference' && classifyWork(w) !== 'conference') return false;
+    const y = w.publication_year || 0;
+    if (from && y < from) return false;
+    if (to < 9999 && y > to) return false;
+    return true;
+  });
+  document.getElementById('pubCount').textContent = `${filteredWorks.length} publication${filteredWorks.length !== 1 ? 's' : ''}`;
+  renderCurrentTab();
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  ['list','year','journals','conferences'].forEach(t => document.getElementById('tab-'+t).classList.toggle('active', t === tab));
+  renderCurrentTab();
+}
+
+function renderCurrentTab() {
+  if (currentTab === 'list') renderList();
+  else if (currentTab === 'year') renderByYear();
+  else if (currentTab === 'journals') renderVenue('journal');
+  else if (currentTab === 'conferences') renderVenue('conference');
+}
+
+function pubCard(w) {
+  const cat = classifyWork(w);
+  const badge = cat === 'journal' ? `<span class="type-badge-j">Journal</span>` : `<span class="type-badge-c">Conference</span>`;
+  const venue = w.primary_location?.source?.display_name;
+  const oa = w.open_access?.is_oa;
+  const authors = (w.authorships||[]).slice(0,5).map(a=>a.author?.display_name).filter(Boolean).join(', ') + ((w.authorships||[]).length > 5 ? ' et al.' : '');
+  const doi = w.doi; const oaUrl = w.primary_location?.landing_page_url;
+  return `<div class="pub-card">
+    <div class="pub-title">${esc(w.display_name || 'Untitled')}</div>
+    <div class="pub-meta">
+      <span class="pub-year">${w.publication_year || '—'}</span>
+      ${badge}
+      ${oa ? '<span class="pub-oa">Open Access</span>' : ''}
+    </div>
+    ${venue ? `<div class="pub-venue">${esc(venue)}</div>` : ''}
+    ${authors ? `<div class="pub-authors">${esc(authors)}</div>` : ''}
+    <div class="pub-footer">
+      <span class="pub-cite-count">${(w.cited_by_count||0).toLocaleString()} citations</span>
+      <div class="pub-links">
+        ${doi ? `<a class="pub-link" href="${esc(doi)}" target="_blank" rel="noopener">DOI ↗</a>` : ''}
+        ${oaUrl && !doi ? `<a class="pub-link" href="${esc(oaUrl)}" target="_blank" rel="noopener">Link ↗</a>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderList() {
+  const el = document.getElementById('content');
+  if (!filteredWorks.length) { el.innerHTML = '<div style="text-align:center;padding:48px;color:var(--fg-muted)">No publications for selected filter.</div>'; return; }
+  el.innerHTML = `<div class="pub-list">${filteredWorks.map(pubCard).join('')}</div>`;
+}
+
+function renderByYear() {
+  const el = document.getElementById('content');
+  if (!filteredWorks.length) { el.innerHTML = '<div style="text-align:center;padding:48px;color:var(--fg-muted)">No publications.</div>'; return; }
+  const byYear = {};
+  filteredWorks.forEach(w => { const y = w.publication_year || 'Unknown'; if (!byYear[y]) byYear[y] = []; byYear[y].push(w); });
+  const years = Object.keys(byYear).sort((a,b) => b - a);
+  el.innerHTML = years.map(y => {
+    const pubs = byYear[y];
+    const jc = pubs.filter(w => classifyWork(w) === 'journal').length;
+    const cc = pubs.filter(w => classifyWork(w) === 'conference').length;
+    return `<div class="year-section">
+      <div class="year-heading">
+        ${esc(String(y))}
+        <span class="year-pill">${pubs.length} paper${pubs.length>1?'s':''}</span>
+        ${jc ? `<span class="type-badge-j" style="font-size:.72rem">${jc} journal</span>` : ''}
+        ${cc ? `<span class="type-badge-c" style="font-size:.72rem">${cc} conference</span>` : ''}
+      </div>
+      <div class="pub-list">${pubs.map(pubCard).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderVenue(cat) {
+  const el = document.getElementById('content');
+  const works = filteredWorks.filter(w => classifyWork(w) === cat);
+  if (!works.length) { el.innerHTML = `<div style="text-align:center;padding:48px;color:var(--fg-muted)">No ${cat} publications.</div>`; return; }
+  const byVenue = {};
+  works.forEach(w => { const v = w.primary_location?.source?.display_name || 'Unknown Venue'; if (!byVenue[v]) byVenue[v] = []; byVenue[v].push(w); });
+  const venues = Object.keys(byVenue).sort((a,b) => byVenue[b].length - byVenue[a].length);
+  el.innerHTML = venues.map((v, vi) => {
+    const papers = byVenue[v].sort((a,b) => (b.publication_year||0)-(a.publication_year||0));
+    const id = `venue-${vi}`;
+    const paperHtml = papers.map(w => {
+      const doi = w.doi;
+      const link = doi ? ` <a href="${esc(doi)}" target="_blank" rel="noopener" style="font-size:.75rem;color:var(--accent)">DOI ↗</a>` : '';
+      const authors = (w.authorships||[]).slice(0,4).map(a=>a.author?.display_name).filter(Boolean).join(', ') + ((w.authorships||[]).length > 4 ? ' et al.' : '');
+      return `<div class="venue-paper"><div class="venue-paper-title">${esc(w.display_name||'Untitled')}${link}</div><div class="venue-paper-meta">${w.publication_year||'—'} · ${esc(authors)} · ${w.cited_by_count||0} citations</div></div>`;
+    }).join('');
+    return `<div class="venue-section">
+      <div class="venue-header" onclick="toggleVenue('${id}')">
+        <span class="venue-name">${esc(v)}</span>
+        <span class="venue-count">${papers.length} paper${papers.length>1?'s':''}</span>
+        <span class="venue-toggle" id="${id}-t">▾</span>
+      </div>
+      <div class="venue-papers" id="${id}">${paperHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleVenue(id) {
+  const el = document.getElementById(id); const tog = document.getElementById(id+'-t');
+  if (!el) return;
+  const h = el.style.display === 'none';
+  el.style.display = h ? 'flex' : 'none'; tog.textContent = h ? '▾' : '▸';
+}
+
+// ── Export ───────────────────────────────────────────────────────────
+function authorList(authorships) { return (authorships||[]).map(a=>a.author?.display_name||'').filter(Boolean); }
+
+function generateBibTeX() {
+  return filteredWorks.map(w => {
+    const cat = classifyWork(w); const type = cat==='journal'?'article':'inproceedings';
+    const auth = (w._member?.name||'author').split(' ').pop().toLowerCase();
+    const base = (w.display_name||'untitled').toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,20);
+    const key = `${auth}${w.publication_year||'0000'}${base}`;
+    const authors = authorList(w.authorships).join(' and ');
+    const venue = w.primary_location?.source?.display_name||'';
+    const doi = (w.doi||'').replace('https://doi.org/','');
+    const vol = w.biblio?.volume||''; const issue = w.biblio?.issue||'';
+    const pages = [w.biblio?.first_page,w.biblio?.last_page].filter(Boolean).join('--');
+    const vk = cat==='journal'?'journal':'booktitle';
+    return `@${type}{${key},\n  author    = {${authors}},\n  title     = {${(w.display_name||'').replace(/[{}]/g,'')}},\n  year      = {${w.publication_year||''}},\n  ${vk}   = {${venue}},${vol?`\n  volume    = {${vol}},`:''}${issue?`\n  number    = {${issue}},`:''}${pages?`\n  pages     = {${pages}},`:''}${doi?`\n  doi       = {${doi}},`:''}\n}`;
+  }).join('\n\n');
+}
+
+function formatApaAuthor(name) {
+  const p = name.trim().split(' '); if (p.length < 2) return name;
+  return `${p[p.length-1]}, ${p.slice(0,-1).map(x=>x[0]+'.').join(' ')}`;
+}
+function generateAPA() {
+  return filteredWorks.map(w => {
+    const auths = authorList(w.authorships);
+    const authorStr = auths.length===0?'Unknown Author':auths.length<=20?auths.map(formatApaAuthor).join(', '):auths.slice(0,19).map(formatApaAuthor).join(', ')+', ... '+formatApaAuthor(auths[auths.length-1]);
+    const year = w.publication_year?`(${w.publication_year})`:'(n.d.)';
+    const venue = w.primary_location?.source?.display_name||'';
+    const vol = w.biblio?.volume||''; const issue = w.biblio?.issue?`(${w.biblio.issue})`:'';
+    const pages = [w.biblio?.first_page,w.biblio?.last_page].filter(Boolean).join('–');
+    const doi = w.doi?`https://doi.org/${w.doi.replace('https://doi.org/','')}`:''
+    return `${authorStr} ${year}. ${w.display_name||'Untitled'}. ${venue}${vol?', '+vol:''}${issue}${pages?', '+pages:''}.${doi?' '+doi:''}`;
+  }).join('\n\n');
+}
+
+function generateIEEE() {
+  return filteredWorks.map((w, i) => {
+    const auths = authorList(w.authorships);
+    const authorStr = auths.length===0?'Unknown Author':auths.slice(0,6).map(n=>{
+      const p=n.trim().split(' '); return `${p.slice(0,-1).map(x=>x[0]+'.').join(' ')} ${p[p.length-1]}`;
+    }).join(', ')+(auths.length>6?' et al.':'');
+    const venue = w.primary_location?.source?.display_name||'';
+    const vol = w.biblio?.volume?`vol. ${w.biblio.volume}`:'';
+    const issue = w.biblio?.issue?`no. ${w.biblio.issue}`:'';
+    const pages = [w.biblio?.first_page,w.biblio?.last_page].filter(Boolean).join('–');
+    const doi = w.doi?`doi: ${w.doi.replace('https://doi.org/','')}`:''
+    const parts = [venue,[vol,issue].filter(Boolean).join(', '),pages?`pp. ${pages}`:'',w.publication_year||'n.d.'].filter(Boolean).join(', ');
+    return `[${i+1}] ${authorStr}, "${w.display_name||'Untitled'}," ${parts}.${doi?' '+doi:''}`;
+  }).join('\n\n');
+}
+
+function generateCSV() {
+  const rows = [['Title','Year','Type','Venue','Authors','Citations','DOI']];
+  filteredWorks.forEach(w => {
+    const authors = authorList(w.authorships).join('; ');
+    const venue = w.primary_location?.source?.display_name||'';
+    const doi = (w.doi||'').replace('https://doi.org/','');
+    rows.push([
+      `"${(w.display_name||'').replace(/"/g,'""')}"`,
+      w.publication_year||'',
+      classifyWork(w),
+      `"${venue.replace(/"/g,'""')}"`,
+      `"${authors.replace(/"/g,'""')}"`,
+      w.cited_by_count||0,
+      doi
+    ]);
+  });
+  return rows.map(r => r.join(',')).join('\n');
+}
+
+function exportAs(fmt) {
+  currentExportFmt = fmt;
+  const label = {bibtex:'BibTeX',apa:'APA 7th',ieee:'IEEE',csv:'CSV'}[fmt];
+  document.getElementById('modalTitle').textContent = `Export — ${label} (${filteredWorks.length} works)`;
+  let content = '';
+  if (fmt==='bibtex') content = generateBibTeX();
+  else if (fmt==='apa') content = generateAPA();
+  else if (fmt==='ieee') content = generateIEEE();
+  else if (fmt==='csv') content = generateCSV();
+  currentExportContent = content;
+  document.getElementById('modalContent').textContent = content;
+  document.getElementById('exportModal').style.display = 'flex';
+}
+function closeModal() { document.getElementById('exportModal').style.display = 'none'; }
+function copyExport() { navigator.clipboard.writeText(currentExportContent).then(()=>alert('Copied!')); }
+function downloadExport() {
+  const ext = {bibtex:'bib',apa:'txt',ieee:'txt',csv:'csv'}[currentExportFmt];
+  const mime = currentExportFmt==='csv'?'text/csv':'text/plain';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([currentExportContent],{type:mime}));
+  a.download = `computing_publications.${ext}`; a.click();
+}
+
+init();
+</script>
+</body>
+</html>
