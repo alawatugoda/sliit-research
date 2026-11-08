@@ -216,30 +216,54 @@ async function init() {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// localStorage cache — expires after 24 hours
+const CACHE_TTL = 24 * 60 * 60 * 1000;
+function cacheGet(key) {
+  try {
+    const raw = localStorage.getItem('oa_' + key);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) { localStorage.removeItem('oa_' + key); return null; }
+    return data;
+  } catch { return null; }
+}
+function cacheSet(key, data) {
+  try { localStorage.setItem('oa_' + key, JSON.stringify({ ts: Date.now(), data })); } catch {}
+}
+
 async function fetchWithRetry(url) {
-  const delays = [1000, 3000, 6000]; // wait before each retry
+  const delays = [2000, 5000, 10000, 20000]; // progressive back-off
   for (let i = 0; i <= delays.length; i++) {
     if (i > 0) await sleep(delays[i-1]);
-    const r = await fetch(url);
-    if (r.status === 429) continue; // wait and retry
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return r.json();
+    try {
+      const r = await fetch(url);
+      if (r.status === 429) continue; // rate limited — wait and retry
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    } catch (e) {
+      if (i === delays.length) throw e;
+    }
   }
   throw new Error('Rate limit — please wait a moment and refresh');
 }
 
 async function fetchAllWorks(oaId) {
-  const baseUrl = `https://api.openalex.org/works?filter=author.id:${oaId}&per-page=50&select=id,display_name,publication_year,type,primary_location,cited_by_count,doi,authorships,biblio,open_access&mailto=research@sliit.lk`;
+  // Return cached data if available
+  const cached = cacheGet(oaId);
+  if (cached) return cached;
+
+  const baseUrl = `https://api.openalex.org/works?filter=author.id:${oaId}&per-page=25&select=id,display_name,publication_year,type,primary_location,cited_by_count,doi,authorships,biblio,open_access&mailto=alawatugoda@eng.pdn.ac.lk`;
   let page = 1, results = [];
-  await sleep(500); // initial delay before first request
+  await sleep(1000); // initial delay before first request
   while(true) {
     const data = await fetchWithRetry(`${baseUrl}&page=${page}`);
     results = results.concat(data.results || []);
     if (results.length >= (data.meta?.count||0) || !(data.results?.length)) break;
     page++;
     if (page > 20) break;
-    await sleep(500); // delay between pages
+    await sleep(1500); // delay between pages
   }
+  cacheSet(oaId, results); // cache for next visit
   return results;
 }
 
