@@ -7,9 +7,9 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-06T08:52:34.203Z",
+    "last_synced": "2026-11-08T11:58:27.144Z",
     "works_count": 15,
-    "cited_by_count": 127,
+    "cited_by_count": 129,
     "h_index": 6
   },
   {
@@ -20,10 +20,10 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-06T08:54:46.147Z",
+    "last_synced": "2026-11-08T11:58:27.963Z",
     "works_count": 60,
-    "cited_by_count": 612,
-    "h_index": 12
+    "cited_by_count": 648,
+    "h_index": 13
   },
   {
     "id": "chathurika-koswatte",
@@ -33,7 +33,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-06T08:53:09.757Z",
+    "last_synced": "2026-11-08T11:58:28.781Z",
     "works_count": 13,
     "cited_by_count": 71,
     "h_index": 5
@@ -46,10 +46,10 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": null,
-    "works_count": null,
-    "cited_by_count": null,
-    "h_index": null
+    "last_synced": "2026-11-08T11:58:29.602Z",
+    "works_count": 1,
+    "cited_by_count": 10,
+    "h_index": 1
   },
   {
     "id": "dinusha-premasiri",
@@ -59,7 +59,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-06T19:01:28.061Z",
+    "last_synced": "2026-11-08T11:58:30.417Z",
     "works_count": 1,
     "cited_by_count": 2,
     "h_index": 1
@@ -72,7 +72,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-06T18:59:54.332Z",
+    "last_synced": "2026-11-08T11:58:31.237Z",
     "works_count": 3,
     "cited_by_count": 1,
     "h_index": 1
@@ -85,7 +85,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-06T19:05:46.331Z",
+    "last_synced": "2026-11-08T11:58:32.056Z",
     "works_count": 2,
     "cited_by_count": 4,
     "h_index": 1
@@ -137,7 +137,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-06T19:16:27.257Z",
+    "last_synced": "2026-11-08T11:58:33.364Z",
     "works_count": 3,
     "cited_by_count": 6,
     "h_index": 2
@@ -150,10 +150,10 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": null,
-    "works_count": null,
-    "cited_by_count": null,
-    "h_index": null
+    "last_synced": "2026-11-08T11:58:34.211Z",
+    "works_count": 1,
+    "cited_by_count": 1,
+    "h_index": 1
   },
   {
     "id": "rashmika-perera",
@@ -215,10 +215,10 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": null,
-    "works_count": null,
-    "cited_by_count": null,
-    "h_index": null
+    "last_synced": "2026-11-08T11:58:34.981Z",
+    "works_count": 2,
+    "cited_by_count": 6,
+    "h_index": 1
   },
   {
     "id": "anjali-kiriella",
@@ -228,10 +228,10 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": null,
-    "works_count": null,
-    "cited_by_count": null,
-    "h_index": null
+    "last_synced": "2026-11-08T11:58:35.845Z",
+    "works_count": 2,
+    "cited_by_count": 4,
+    "h_index": 1
   },
   {
     "id": "hiroshika-marassana",
@@ -267,10 +267,10 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": null,
-    "works_count": null,
-    "cited_by_count": null,
-    "h_index": null
+    "last_synced": "2026-11-08T11:58:36.659Z",
+    "works_count": 1,
+    "cited_by_count": 0,
+    "h_index": 0
   },
   {
     "id": "umesha-rathnayake",
@@ -319,9 +319,9 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": null,
-    "works_count": null,
-    "cited_by_count": null,
-    "h_index": null
+    "last_synced": "2026-11-08T11:58:37.482Z",
+    "works_count": 1,
+    "cited_by_count": 0,
+    "h_index": 0
   }
 ]
