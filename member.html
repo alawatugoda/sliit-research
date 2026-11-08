@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Publications — SLIIT KandyUni</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#f8f7f5;--surface:#fff;--border:#e2e0db;--fg:#1a1917;--fg-muted:#6b6762;--accent:#2563eb;--accent-soft:#dbeafe;--tag-bg:#f1f0ee;--code-bg:#f4f3f1;--journal:#065f46;--journal-bg:#d1fae5;--conf:#7c3aed;--conf-bg:#ede9fe;}
+@media(prefers-color-scheme:dark){:root{--bg:#111110;--surface:#1c1b19;--border:#2e2d2a;--fg:#f0ede8;--fg-muted:#888480;--accent:#60a5fa;--accent-soft:#1e3a5f;--tag-bg:#252420;--code-bg:#1a1917;--journal:#34d399;--journal-bg:#064e3b;--conf:#a78bfa;--conf-bg:#3b1f6e;}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--fg);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.6;}
+a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
+
+.site-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:12px;height:56px;}
+.back-link{font-size:.85rem;color:var(--fg-muted);padding:6px 10px;border-radius:6px;transition:background .15s;}
+.back-link:hover{background:var(--tag-bg);color:var(--fg);text-decoration:none;}
+.site-name{font-size:.9rem;color:var(--fg-muted);}
+
+.page{max-width:960px;margin:0 auto;padding:32px 24px 64px;}
+
+/* Profile */
+.profile{display:flex;gap:20px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;}
+.profile-avatar{width:64px;height:64px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:var(--accent);flex-shrink:0;}
+.profile-info{flex:1;min-width:0;}
+.profile-name{font-size:1.3rem;font-weight:700;}
+.profile-title{color:var(--fg-muted);font-size:.9rem;margin-top:2px;}
+.profile-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.profile-tag{background:var(--tag-bg);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:.78rem;color:var(--fg-muted);}
+.profile-stats{display:flex;gap:20px;margin-top:14px;flex-wrap:wrap;}
+.pstat{display:flex;flex-direction:column;}
+.pstat-val{font-size:1.4rem;font-weight:700;line-height:1.1;}
+.pstat-lbl{font-size:.75rem;color:var(--fg-muted);}
+.ext-links{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+.ext-link{font-size:.82rem;color:var(--accent);font-weight:500;}
+
+/* Tab bar */
+.tab-bar{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.tab{padding:8px 18px;font-size:.88rem;font-weight:600;color:var(--fg-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;border-radius:6px 6px 0 0;transition:color .15s,border-color .15s,background .15s;}
+.tab:hover{background:var(--tag-bg);color:var(--fg);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* Controls */
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;align-items:center;}
+.ctl-select{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.85rem;color:var(--fg);cursor:pointer;outline:none;}
+.type-btn{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px 13px;font-size:.82rem;font-weight:600;color:var(--fg-muted);cursor:pointer;transition:all .15s;}
+.type-btn:hover{background:var(--tag-bg);}
+.type-btn.active-j{background:var(--journal-bg);color:var(--journal);border-color:var(--journal);}
+.type-btn.active-c{background:var(--conf-bg);color:var(--conf);border-color:var(--conf);}
+.type-btn.active-all{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);}
+.export-group{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;}
+.export-btn{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px 13px;font-size:.8rem;font-weight:600;color:var(--fg-muted);cursor:pointer;transition:background .15s,color .15s;}
+.export-btn:hover{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);}
+.pub-count{font-size:.85rem;color:var(--fg-muted);white-space:nowrap;}
+
+/* Publications list */
+.pub-list{display:flex;flex-direction:column;gap:12px;}
+.pub-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:8px;}
+.pub-title{font-weight:600;font-size:.95rem;line-height:1.35;}
+.pub-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.pub-year{font-size:.8rem;background:var(--tag-bg);padding:2px 8px;border-radius:5px;color:var(--fg-muted);font-weight:600;}
+.type-badge-j{font-size:.78rem;background:var(--journal-bg);color:var(--journal);padding:2px 8px;border-radius:5px;font-weight:600;}
+.type-badge-c{font-size:.78rem;background:var(--conf-bg);color:var(--conf);padding:2px 8px;border-radius:5px;font-weight:600;}
+.pub-oa{font-size:.78rem;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:5px;font-weight:600;}
+.pub-venue{font-size:.82rem;color:var(--fg-muted);font-style:italic;}
+.pub-authors{font-size:.8rem;color:var(--fg-muted);}
+.pub-footer{display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid var(--border);flex-wrap:wrap;gap:6px;}
+.pub-cite-count{font-size:.8rem;color:var(--fg-muted);}
+.pub-links{display:flex;gap:10px;}
+.pub-link{font-size:.78rem;color:var(--accent);font-weight:500;}
+
+/* Year view */
+.year-section{margin-bottom:32px;}
+.year-heading{font-size:1.1rem;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
+.year-pill{font-size:.78rem;background:var(--tag-bg);padding:3px 10px;border-radius:12px;color:var(--fg-muted);font-weight:500;}
+
+/* Venue list (journals / conferences) */
+.venue-section{margin-bottom:28px;}
+.venue-header{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;cursor:pointer;user-select:none;}
+.venue-name{font-weight:600;font-size:.95rem;}
+.venue-count{font-size:.78rem;color:var(--fg-muted);background:var(--tag-bg);padding:2px 8px;border-radius:5px;}
+.venue-toggle{font-size:.78rem;color:var(--fg-muted);margin-left:auto;}
+.venue-papers{display:flex;flex-direction:column;gap:8px;padding-left:16px;border-left:2px solid var(--border);}
+.venue-paper{padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;}
+.venue-paper-title{font-size:.88rem;font-weight:600;line-height:1.3;}
+.venue-paper-meta{font-size:.78rem;color:var(--fg-muted);margin-top:4px;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:600px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-title{font-weight:700;font-size:1rem;}
+.modal-close{background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--fg-muted);padding:4px 8px;}
+.modal-body{padding:16px 20px;overflow-y:auto;flex:1;}
+.modal-pre{background:var(--code-bg);border-radius:8px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:.73rem;white-space:pre-wrap;word-break:break-word;max-height:320px;overflow-y:auto;}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+.btn{padding:8px 18px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{opacity:.85;}
+.btn-ghost{background:var(--tag-bg);color:var(--fg);}
+
+.spinner{width:18px;height:18px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;margin:40px auto;display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.error-msg{color:#dc2626;text-align:center;padding:32px;font-size:.9rem;}
+@media(prefers-color-scheme:dark){.error-msg{color:#f87171;}}
+@media(max-width:600px){.profile{flex-direction:column;}.controls{flex-direction:column;align-items:stretch;}.export-group{margin-left:0;}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="back-link" href="index.html">← All Staff</a>
+    <span class="site-name">SLIIT KandyUni Research</span>
+  </div>
+</header>
+
+<div class="page">
+  <div id="profileArea"></div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar" id="tabBar" style="display:none">
+    <div class="tab active" onclick="switchTab('list')" id="tab-list">Publications</div>
+    <div class="tab" onclick="switchTab('year')" id="tab-year">By Year</div>
+    <div class="tab" onclick="switchTab('journals')" id="tab-journals">Journals</div>
+    <div class="tab" onclick="switchTab('conferences')" id="tab-conferences">Conferences</div>
+  </div>
+
+  <!-- Controls (shown on list + year tab) -->
+  <div class="controls" id="controlsArea" style="display:none">
+    <button class="type-btn active-all" id="btn-all"   onclick="setTypeFilter('all')">All</button>
+    <button class="type-btn"            id="btn-j"     onclick="setTypeFilter('journal')">📄 Journals</button>
+    <button class="type-btn"            id="btn-c"     onclick="setTypeFilter('conference')">🎤 Conferences</button>
+      <select class="ctl-select" id="fromYear" onchange="applyFilter()">
+        <option value="">From Year</option>
+      </select>
+      <span style="color:var(--fg-muted);font-size:.85rem">→</span>
+      <select class="ctl-select" id="toYear" onchange="applyFilter()">
+        <option value="">To Year</option>
+      </select>
+    <span class="pub-count" id="pubCount"></span>
+    <div class="export-group">
+      <button class="export-btn" onclick="exportAs('bibtex')">BibTeX</button>
+      <button class="export-btn" onclick="exportAs('apa')">APA</button>
+      <button class="export-btn" onclick="exportAs('ieee')">IEEE</button>
+    </div>
+  </div>
+
+  <div id="mainContent"></div>
+</div>
+
+<!-- Export modal -->
+<div class="modal-overlay" id="exportModal" style="display:none" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Export</span>
+      <button class="modal-close" onclick="document.getElementById('exportModal').style.display='none'">✕</button>
+    </div>
+    <div class="modal-body"><pre class="modal-pre" id="modalContent"></pre></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('exportModal').style.display='none'">Close</button>
+      <button class="btn btn-primary" onclick="copyExport()">Copy</button>
+      <button class="btn btn-primary" onclick="downloadExport()">Download</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+let member = null;
+let allWorks = [];        // all fetched works
+let jcWorks = [];         // only journal + conference
+let filteredWorks = [];   // current view after filters
+let typeFilter = 'all';   // 'all' | 'journal' | 'conference'
+let currentTab = 'list';
+let currentExportFormat = 'bibtex';
+let currentExportContent = '';
+
+// OpenAlex type → category
+function classifyWork(w) {
+  const t = (w.type || '').toLowerCase();
+  if (t === 'journal-article' || t === 'article') return 'journal';
+  if (t === 'proceedings-article' || t === 'conference-paper') return 'conference';
+  return 'other';
+}
+
+let filterYear = null; // set from ?year= param
+
+async function init() {
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  if (!id) { showError('No member specified.'); return; }
+
+  filterYear = params.get('year') ? parseInt(params.get('year')) : null;
+
+  let members = [];
+  try {
+    const r = await fetch('data/members.json?_=' + Date.now());
+    members = await r.json();
+  } catch(e) {}
+  member = members.find(m => m.id === id);
+  if (!member) { showError('Member not found.'); return; }
+
+  document.title = member.name + ' — SLIIT KandyUni Research';
+  renderProfile();
+
+  // Check cache first — if cached, load immediately; otherwise show Load button
+  await loadPublications();
+}
+
+async function loadPublications() {
+  document.getElementById('mainContent').innerHTML = '<div class="spinner"></div>';
+  try {
+    const works = await fetchAllWorks(member.openalex_id);
+    allWorks = works.sort((a,b) => (b.publication_year||0) - (a.publication_year||0));
+    jcWorks = allWorks.filter(w => classifyWork(w) !== 'other');
+    buildYearFilter();
+    updateProfileStats();
+    document.getElementById('tabBar').style.display = 'flex';
+    document.getElementById('controlsArea').style.display = 'flex';
+    // If ?year= param set, switch to By Year tab and select that year
+    if (filterYear) {
+      switchTab('year');
+      const f = document.getElementById('fromYear');
+      const t = document.getElementById('toYear');
+      if (f) f.value = String(filterYear);
+      if (t) t.value = String(filterYear);
+    }
+    applyFilter();
+  } catch(e) {
+    const is429 = e.message === '429';
+    document.getElementById('mainContent').innerHTML = `
+      <div class="error-msg">
+        ${is429
+          ? `<strong>Too many requests</strong> — OpenAlex API is busy right now.<br><span style="font-size:.85rem;color:var(--fg-muted)">Please wait a moment and try again.</span>`
+          : `Could not load publications: ${esc(e.message)}`}
+        <br>
+        <button onclick="loadPublications()" style="margin-top:14px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:.88rem;font-weight:600;cursor:pointer;">Try Again</button>
+      </div>`;
+  }
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// localStorage cache — expires after 24 hours
+const CACHE_TTL = 24 * 60 * 60 * 1000;
+function cacheGet(key) {
+  try {
+    const raw = localStorage.getItem('oa_' + key);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) { localStorage.removeItem('oa_' + key); return null; }
+    return data;
+  } catch { return null; }
+}
+function cacheSet(key, data) {
+  try { localStorage.setItem('oa_' + key, JSON.stringify({ ts: Date.now(), data })); } catch {}
+}
+
+async function fetchWithRetry(url) {
+  const delays = [3000, 8000, 15000, 30000]; // progressive back-off
+  for (let i = 0; i <= delays.length; i++) {
+    if (i > 0) await sleep(delays[i-1]);
+    try {
+      const r = await fetch(url, {
+        headers: { 'User-Agent': 'SLIIT-KandyUni-Research/1.0 (mailto:alawatugoda@eng.pdn.ac.lk)' }
+      });
+      if (r.status === 429) {
+        // Check Retry-After header
+        const retryAfter = r.headers.get('Retry-After');
+        if (retryAfter) await sleep(parseInt(retryAfter) * 1000);
+        continue;
+      }
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    } catch (e) {
+      if (i === delays.length) throw e;
+    }
+  }
+  throw new Error('429');
+}
+
+async function fetchAllWorks(oaId) {
+  // Return cached data if available
+  const cached = cacheGet(oaId);
+  if (cached) return cached;
+
+  const baseUrl = `https://api.openalex.org/works?filter=author.id:${oaId}&per-page=50&select=id,display_name,publication_year,type,primary_location,cited_by_count,doi,authorships,biblio,open_access&api_key=w0kxNmNub5piF2PcfVwHpd`;
+  let page = 1, results = [];
+  await sleep(200); // small initial delay
+  while(true) {
+    const data = await fetchWithRetry(`${baseUrl}&page=${page}`);
+    results = results.concat(data.results || []);
+    if (results.length >= (data.meta?.count||0) || !(data.results?.length)) break;
+    page++;
+    if (page > 20) break;
+    await sleep(200); // delay between pages
+  }
+  cacheSet(oaId, results); // cache for next visit
+  return results;
+}
+
+// ── Stats ──────────────────────────────────────────────────────────
+function updateProfileStats() {
+  const totalCites = jcWorks.reduce((s,w) => s+(w.cited_by_count||0), 0);
+  document.getElementById('statPubs').textContent = jcWorks.length;
+  document.getElementById('statCites').textContent = totalCites.toLocaleString();
+  const sorted = jcWorks.map(w=>w.cited_by_count||0).sort((a,b)=>b-a);
+  let h = 0;
+  for(let i=0;i<sorted.length;i++){if(sorted[i]>=i+1)h=i+1;else break;}
+  document.getElementById('statH').textContent = h;
+}
+
+// ── Filters ────────────────────────────────────────────────────────
+function getBaseWorks() {
+  if (typeFilter === 'journal') return jcWorks.filter(w => classifyWork(w) === 'journal');
+  if (typeFilter === 'conference') return jcWorks.filter(w => classifyWork(w) === 'conference');
+  return jcWorks;
+}
+
+function setTypeFilter(t) {
+  typeFilter = t;
+  ['all','j','c'].forEach(k => {
+    const b = document.getElementById('btn-'+k);
+    b.className = 'type-btn';
+  });
+  if (t === 'all')        { document.getElementById('btn-all').classList.add('active-all'); }
+  else if (t === 'journal')    { document.getElementById('btn-j').classList.add('active-j'); }
+  else if (t === 'conference') { document.getElementById('btn-c').classList.add('active-c'); }
+  applyFilter();
+}
+
+function buildYearFilter() {
+  const years = [...new Set(jcWorks.map(w=>w.publication_year).filter(Boolean))].sort((a,b)=>a-b);
+  ['fromYear','toYear'].forEach(id => {
+    const sel = document.getElementById(id);
+    while(sel.options.length > 1) sel.remove(1);
+    const ordered = id === 'fromYear' ? years : [...years].reverse();
+    ordered.forEach(y => { const o = document.createElement('option'); o.value = y; o.textContent = y; sel.appendChild(o); });
+  });
+}
+
+function applyFilter() {
+  const from = parseInt(document.getElementById('fromYear').value) || 0;
+  const to = parseInt(document.getElementById('toYear').value) || 9999;
+  let base = getBaseWorks();
+  filteredWorks = base.filter(w => {
+    const y = w.publication_year || 0;
+    if (from && y < from) return false;
+    if (to < 9999 && y > to) return false;
+    return true;
+  });
+  document.getElementById('pubCount').textContent = `${filteredWorks.length} publication${filteredWorks.length!==1?'s':''}`;
+  renderCurrentTab();
+}
+
+// ── Tab switching ──────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  ['list','year','journals','conferences'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+  });
+  // Show controls only on list + year tabs
+  const showCtl = tab === 'list' || tab === 'year';
+  document.getElementById('controlsArea').style.display = showCtl ? 'flex' : 'none';
+  renderCurrentTab();
+}
+
+function renderCurrentTab() {
+  if (currentTab === 'list') renderList();
+  else if (currentTab === 'year') renderByYear();
+  else if (currentTab === 'journals') renderVenueTab('journal');
+  else if (currentTab === 'conferences') renderVenueTab('conference');
+}
+
+// ── Tab: Publication list ──────────────────────────────────────────
+function renderList() {
+  const el = document.getElementById('mainContent');
+  if (!filteredWorks.length) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--fg-muted)">No publications for selected filter.</div>';
+    return;
+  }
+  el.innerHTML = `<div class="pub-list">${filteredWorks.map(w => pubCard(w)).join('')}</div>`;
+}
+
+function pubCard(w) {
+  const title = w.display_name || w.title || 'Untitled';
+  const year = w.publication_year || '—';
+  const venue = w.primary_location?.source?.display_name;
+  const oa = w.open_access?.is_oa;
+  const cat = classifyWork(w);
+  const badge = cat === 'journal'
+    ? `<span class="type-badge-j">Journal</span>`
+    : `<span class="type-badge-c">Conference</span>`;
+  const authors = (w.authorships||[]).slice(0,5).map(a=>a.author?.display_name).filter(Boolean).join(', ')
+    + ((w.authorships||[]).length > 5 ? ' et al.' : '');
+  const doi = w.doi;
+  const oaUrl = w.primary_location?.landing_page_url;
+  return `<div class="pub-card">
+    <div class="pub-title">${esc(title)}</div>
+    <div class="pub-meta">
+      <span class="pub-year">${year}</span>
+      ${badge}
+      ${oa ? '<span class="pub-oa">Open Access</span>' : ''}
+    </div>
+    ${venue ? `<div class="pub-venue">${esc(venue)}</div>` : ''}
+    ${authors ? `<div class="pub-authors">${esc(authors)}</div>` : ''}
+    <div class="pub-footer">
+      <span class="pub-cite-count">${(w.cited_by_count||0).toLocaleString()} citations</span>
+      <div class="pub-links">
+        ${doi ? `<a class="pub-link" href="${esc(doi)}" target="_blank" rel="noopener">DOI ↗</a>` : ''}
+        ${oaUrl && !doi ? `<a class="pub-link" href="${esc(oaUrl)}" target="_blank" rel="noopener">Link ↗</a>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Tab: By Year ───────────────────────────────────────────────────
+function renderByYear() {
+  const el = document.getElementById('mainContent');
+  const works = filteredWorks;
+  if (!works.length) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--fg-muted)">No publications.</div>'; return; }
+
+  // Group by year
+  const byYear = {};
+  works.forEach(w => {
+    const y = w.publication_year || 'Unknown';
+    if (!byYear[y]) byYear[y] = [];
+    byYear[y].push(w);
+  });
+  const years = Object.keys(byYear).sort((a,b) => b - a);
+
+  el.innerHTML = years.map(y => {
+    const pubs = byYear[y];
+    const jCount = pubs.filter(w => classifyWork(w) === 'journal').length;
+    const cCount = pubs.filter(w => classifyWork(w) === 'conference').length;
+    const pills = [
+      jCount ? `<span class="type-badge-j" style="font-size:.72rem">${jCount} journal</span>` : '',
+      cCount ? `<span class="type-badge-c" style="font-size:.72rem">${cCount} conference</span>` : ''
+    ].filter(Boolean).join('');
+    return `<div class="year-section">
+      <div class="year-heading">
+        ${esc(String(y))}
+        <span class="year-pill">${pubs.length} paper${pubs.length>1?'s':''}</span>
+        ${pills}
+      </div>
+      <div class="pub-list">${pubs.map(w => pubCard(w)).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── Tab: Journals / Conferences ────────────────────────────────────
+function renderVenueTab(cat) {
+  const el = document.getElementById('mainContent');
+  const works = jcWorks.filter(w => classifyWork(w) === cat);
+
+  if (!works.length) {
+    el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--fg-muted)">No ${cat} publications.</div>`;
+    return;
+  }
+
+  // Group by venue
+  const byVenue = {};
+  works.forEach(w => {
+    const v = w.primary_location?.source?.display_name || 'Unknown Venue';
+    if (!byVenue[v]) byVenue[v] = [];
+    byVenue[v].push(w);
+  });
+
+  // Sort venues by number of papers desc
+  const venues = Object.keys(byVenue).sort((a,b) => byVenue[b].length - byVenue[a].length);
+
+  el.innerHTML = venues.map((v, vi) => {
+    const papers = byVenue[v].sort((a,b) => (b.publication_year||0) - (a.publication_year||0));
+    const id = `venue-${vi}`;
+    const paperHtml = papers.map(w => {
+      const doi = w.doi;
+      const link = doi ? ` <a href="${esc(doi)}" target="_blank" rel="noopener" style="font-size:.75rem;color:var(--accent)">DOI ↗</a>` : '';
+      const authors = (w.authorships||[]).slice(0,4).map(a=>a.author?.display_name).filter(Boolean).join(', ')
+        + ((w.authorships||[]).length > 4 ? ' et al.' : '');
+      return `<div class="venue-paper">
+        <div class="venue-paper-title">${esc(w.display_name || 'Untitled')}${link}</div>
+        <div class="venue-paper-meta">${w.publication_year || '—'} · ${esc(authors)} · ${(w.cited_by_count||0)} citations</div>
+      </div>`;
+    }).join('');
+    return `<div class="venue-section">
+      <div class="venue-header" onclick="toggleVenue('${id}')">
+        <span class="venue-name">${esc(v)}</span>
+        <span class="venue-count">${papers.length} paper${papers.length>1?'s':''}</span>
+        <span class="venue-toggle" id="${id}-toggle">▾</span>
+      </div>
+      <div class="venue-papers" id="${id}">${paperHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleVenue(id) {
+  const el = document.getElementById(id);
+  const tog = document.getElementById(id+'-toggle');
+  if (!el) return;
+  const hidden = el.style.display === 'none';
+  el.style.display = hidden ? 'flex' : 'none';
+  tog.textContent = hidden ? '▾' : '▸';
+}
+
+// ── Profile render ─────────────────────────────────────────────────
+function renderProfile() {
+  const ini = member.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('profileArea').innerHTML = `
+    <div class="profile">
+      <div class="profile-avatar">${ini}</div>
+      <div class="profile-info">
+        <div class="profile-name">${esc(member.name)}</div>
+        <div class="profile-title">${esc(member.title||'')}</div>
+        <div class="profile-meta">
+          ${member.department ? `<span class="profile-tag">${esc(member.department)}</span>` : ''}
+          ${member.email ? `<span class="profile-tag">${esc(member.email)}</span>` : ''}
+        </div>
+        <div class="profile-stats">
+          <div class="pstat"><div class="pstat-val" id="statPubs">—</div><div class="pstat-lbl">Journal &amp; Conference Papers</div></div>
+          <div class="pstat"><div class="pstat-val" id="statCites">—</div><div class="pstat-lbl">Citations</div></div>
+          <div class="pstat"><div class="pstat-val" id="statH">—</div><div class="pstat-lbl">h-index</div></div>
+        </div>
+        <div class="ext-links">
+          ${member.openalex_id ? `<a class="ext-link" href="https://openalex.org/authors/${member.openalex_id}" target="_blank">↗ OpenAlex</a>` : ''}
+          ${member.orcid ? `<a class="ext-link" href="${esc(member.orcid)}" target="_blank">↗ ORCID</a>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── Export ─────────────────────────────────────────────────────────
+function exportAs(fmt) {
+  currentExportFormat = fmt;
+  const label = {bibtex:'BibTeX', apa:'APA 7th', ieee:'IEEE'}[fmt];
+  document.getElementById('modalTitle').textContent = `Export — ${label} (${filteredWorks.length} works)`;
+  let content = '';
+  if (fmt === 'bibtex') content = generateBibTeX();
+  else if (fmt === 'apa') content = generateAPA();
+  else if (fmt === 'ieee') content = generateIEEE();
+  currentExportContent = content;
+  document.getElementById('modalContent').textContent = content;
+  document.getElementById('exportModal').style.display = 'flex';
+}
+function closeModal(e){if(e.target.id==='exportModal')document.getElementById('exportModal').style.display='none';}
+function copyExport(){navigator.clipboard.writeText(currentExportContent).then(()=>alert('Copied!'));}
+function downloadExport(){
+  const ext={bibtex:'bib',apa:'txt',ieee:'txt'}[currentExportFormat];
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([currentExportContent],{type:'text/plain'}));
+  a.download=`${member.name.replace(/\s+/g,'_')}_publications.${ext}`;a.click();
+}
+
+function authorList(authorships){return(authorships||[]).map(a=>a.author?.display_name||'').filter(Boolean);}
+function slugify(title,year){
+  const base=(title||'untitled').toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,20);
+  const auth=(member.name||'author').split(' ').pop().toLowerCase();
+  return`${auth}${year||'0000'}${base}`;
+}
+
+function generateBibTeX(){
+  return filteredWorks.map(w=>{
+    const cat=classifyWork(w);
+    const type=cat==='journal'?'article':'inproceedings';
+    const key=slugify(w.display_name,w.publication_year);
+    const authors=authorList(w.authorships).join(' and ');
+    const venue=w.primary_location?.source?.display_name||'';
+    const doi=(w.doi||'').replace('https://doi.org/','');
+    const vol=w.biblio?.volume||'';const issue=w.biblio?.issue||'';
+    const pages=[w.biblio?.first_page,w.biblio?.last_page].filter(Boolean).join('--');
+    const venueKey=cat==='journal'?'journal':'booktitle';
+    return`@${type}{${key},\n  author    = {${authors}},\n  title     = {${(w.display_name||'').replace(/[{}]/g,'')}},\n  year      = {${w.publication_year||''}},\n  ${venueKey}   = {${venue}},${vol?`\n  volume    = {${vol}},`:''}${issue?`\n  number    = {${issue}},`:''}${pages?`\n  pages     = {${pages}},`:''}${doi?`\n  doi       = {${doi}},`:''}\n}`;
+  }).join('\n\n');
+}
+
+function formatApaAuthor(name){
+  const p=name.trim().split(' ');if(p.length<2)return name;
+  return`${p[p.length-1]}, ${p.slice(0,-1).map(x=>x[0]+'.').join(' ')}`;
+}
+function generateAPA(){
+  return filteredWorks.map(w=>{
+    const auths=authorList(w.authorships);
+    const authorStr=auths.length===0?'Unknown Author':auths.length<=20?auths.map(formatApaAuthor).join(', '):auths.slice(0,19).map(formatApaAuthor).join(', ')+', ... '+formatApaAuthor(auths[auths.length-1]);
+    const year=w.publication_year?`(${w.publication_year})`:'(n.d.)';
+    const title=w.display_name||'Untitled';
+    const venue=w.primary_location?.source?.display_name||'';
+    const vol=w.biblio?.volume||'';const issue=w.biblio?.issue?`(${w.biblio.issue})`:'';
+    const pages=[w.biblio?.first_page,w.biblio?.last_page].filter(Boolean).join('–');
+    const doi=w.doi?`https://doi.org/${w.doi.replace('https://doi.org/','')}`:''
+    return`${authorStr} ${year}. ${title}. ${venue}${vol?', '+vol:''}${issue}${pages?', '+pages:''}.${doi?' '+doi:''}`;
+  }).join('\n\n');
+}
+
+function generateIEEE(){
+  return filteredWorks.map((w,i)=>{
+    const auths=authorList(w.authorships);
+    const authorStr=auths.length===0?'Unknown Author':auths.slice(0,6).map(n=>{
+      const p=n.trim().split(' ');return`${p.slice(0,-1).map(x=>x[0]+'.').join(' ')} ${p[p.length-1]}`;
+    }).join(', ')+(auths.length>6?' et al.':'');
+    const title=`"${w.display_name||'Untitled'},"`;
+    const venue=w.primary_location?.source?.display_name||'';
+    const vol=w.biblio?.volume?`vol. ${w.biblio.volume}`:'';
+    const issue=w.biblio?.issue?`no. ${w.biblio.issue}`:'';
+    const pages=[w.biblio?.first_page,w.biblio?.last_page].filter(Boolean).join('–');
+    const year=w.publication_year||'n.d.';
+    const doi=w.doi?`doi: ${w.doi.replace('https://doi.org/','')}`:''
+    const parts=[venue,[vol,issue].filter(Boolean).join(', '),pages?`pp. ${pages}`:'',year].filter(Boolean).join(', ');
+    return`[${i+1}] ${authorStr}, ${title} ${parts}.${doi?' '+doi:''}`;
+  }).join('\n\n');
+}
+
+function showError(msg){document.getElementById('profileArea').innerHTML=`<div class="error-msg">${esc(msg)}</div>`;}
+
+init();
+</script>
+</body>
+</html>
