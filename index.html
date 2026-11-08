@@ -63,6 +63,9 @@ a{color:inherit;text-decoration:none;}
 .sync-badge{font-size:.72rem;color:var(--fg-muted);}
 .empty-state{grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--fg-muted);}
 .empty-state h2{font-size:1.1rem;margin-bottom:8px;color:var(--fg);}
+.group-header{grid-column:1/-1;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-muted);padding:16px 0 6px;border-top:1px solid var(--border);margin-top:8px;}
+.group-header:first-child{border-top:none;margin-top:0;padding-top:4px;}
+.group-count{background:var(--tag-bg);border-radius:10px;padding:1px 8px;font-size:.75rem;font-weight:600;color:var(--fg-muted);margin-left:6px;text-transform:none;letter-spacing:0;}
 
 /* Year view */
 .year-section{margin-top:28px;}
@@ -192,14 +195,12 @@ function timeAgo(iso) {
   return `Synced ${d}d ago`;
 }
 
-function renderGrid(list) {
-  const grid = document.getElementById('memberGrid');
-  if (!list.length) {
-    grid.innerHTML = `<div class="empty-state"><h2>No staff members found</h2><p>Try a different search or add members via the admin panel.</p></div>`;
-    return;
-  }
-  grid.innerHTML = list.map(m => `
-    <div class="member-card" onclick="location.href='member.html?id=${m.id}'">
+const POSITION_ORDER = ['Assistant Professor','Lecturer','Assistant Lecturer','Instructor'];
+
+function memberCard(m) {
+  const hasData = m.openalex_id;
+  return `
+    <div class="member-card" onclick="${hasData ? `location.href='member.html?id=${m.id}'` : ''}">
       <div class="member-avatar">${initials(m.name)}</div>
       <div>
         <div class="member-name">${esc(m.name)}</div>
@@ -207,15 +208,36 @@ function renderGrid(list) {
       </div>
       ${m.department ? `<span class="member-dept">${esc(m.department)}</span>` : ''}
       <div class="member-stats">
-        <div class="stat"><strong>${(m.works_count||0).toLocaleString()}</strong> papers</div>
-        <div class="stat"><strong>${(m.cited_by_count||0).toLocaleString()}</strong> citations</div>
-        ${m.h_index != null ? `<div class="stat"><strong>${m.h_index}</strong> h-index</div>` : ''}
+        ${hasData ? `
+          <div class="stat"><strong>${(m.works_count||0).toLocaleString()}</strong> papers</div>
+          <div class="stat"><strong>${(m.cited_by_count||0).toLocaleString()}</strong> citations</div>
+          ${m.h_index != null ? `<div class="stat"><strong>${m.h_index}</strong> h-index</div>` : ''}
+        ` : `<div class="stat" style="color:var(--fg-muted);font-size:.8rem">No publications data</div>`}
       </div>
       <div class="member-footer">
-        <span class="view-btn">View publications →</span>
+        ${hasData ? `<span class="view-btn">View publications →</span>` : `<span></span>`}
         <span class="sync-badge">${timeAgo(m.last_synced)}</span>
       </div>
-    </div>
+    </div>`;
+}
+
+function renderGrid(list) {
+  const grid = document.getElementById('memberGrid');
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state"><h2>No staff members found</h2><p>Try a different search or add members via the admin panel.</p></div>`;
+    return;
+  }
+  // Group by position
+  const groups = {};
+  list.forEach(m => {
+    const pos = m.title || 'Other';
+    if (!groups[pos]) groups[pos] = [];
+    groups[pos].push(m);
+  });
+  const ordered = POSITION_ORDER.filter(p => groups[p]).concat(Object.keys(groups).filter(p => !POSITION_ORDER.includes(p)));
+  grid.innerHTML = ordered.map(pos => `
+    <div class="group-header">${esc(pos)}s <span class="group-count">${groups[pos].length}</span></div>
+    ${groups[pos].map(memberCard).join('')}
   `).join('');
 }
 
@@ -235,17 +257,18 @@ async function loadYearView() {
   const container = document.getElementById('yearContent');
   container.innerHTML = `<p style="color:var(--fg-muted);padding:16px 0">Fetching publications from OpenAlex… <span class="spinner-inline"></span></p>`;
 
-  // Fetch all members' works in parallel
+  // Fetch sequentially to avoid rate limiting
   let allWorks = [];
-  const promises = members.filter(m => m.openalex_id).map(async m => {
+  const withId = members.filter(m => m.openalex_id);
+  for (let i = 0; i < withId.length; i++) {
+    const m = withId[i];
+    container.innerHTML = `<p style="color:var(--fg-muted);padding:16px 0">Fetching publications… (${i+1}/${withId.length}: ${m.name})</p>`;
     try {
       const works = await fetchMemberWorks(m.openalex_id, m.name);
-      return works;
-    } catch(e) { return []; }
-  });
-
-  const results = await Promise.all(promises);
-  results.forEach(w => allWorks = allWorks.concat(w));
+      allWorks = allWorks.concat(works);
+    } catch(e) { /* skip on error */ }
+    if (i < withId.length - 1) await new Promise(r => setTimeout(r, 500)); // 500ms between members
+  }
 
   if (!allWorks.length) {
     container.innerHTML = `<p style="color:var(--fg-muted);padding:20px 0">No publications found.</p>`;
@@ -289,15 +312,22 @@ async function loadYearView() {
 }
 
 async function fetchMemberWorks(oaId, name) {
-  const url = `https://api.openalex.org/works?filter=author.id:${oaId},type:journal-article|proceedings-article&per-page=200&select=id,display_name,publication_year,type,primary_location,cited_by_count,doi,authorships,biblio,open_access&mailto=research@sliit.lk`;
+  const url = `https://api.openalex.org/works?filter=author.id:${oaId}&per-page=100&select=id,display_name,publication_year,type,primary_location,cited_by_count,doi,authorships,biblio,open_access&mailto=research@sliit.lk`;
   let page = 1, results = [];
   while(true) {
-    const r = await fetch(`${url}&page=${page}`);
+    let r;
+    // retry up to 3 times on 429
+    for (let attempt = 0; attempt < 3; attempt++) {
+      r = await fetch(`${url}&page=${page}`);
+      if (r.status === 429) await new Promise(res => setTimeout(res, 2000 * (attempt+1)));
+      else break;
+    }
     if (!r.ok) break;
     const data = await r.json();
     results = results.concat(data.results || []);
     if (results.length >= (data.meta?.count||0) || !(data.results?.length)) break;
     page++; if (page > 10) break;
+    await new Promise(res => setTimeout(res, 300));
   }
   return results;
 }
