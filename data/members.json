@@ -362,5 +362,18 @@
     "works_count": 2,
     "cited_by_count": 5,
     "h_index": 1
+  },
+  {
+    "id": "oshani-dissanayake",
+    "name": "Oshani Dissanayake",
+    "openalex_id": "A5148379381",
+    "title": "Lecturer",
+    "department": "Business Management",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-08T17:18:08.508Z",
+    "works_count": 1,
+    "cited_by_count": 0,
+    "h_index": 0
   }
 ]
