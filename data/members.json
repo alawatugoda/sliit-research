@@ -375,5 +375,18 @@
     "works_count": 1,
     "cited_by_count": 0,
     "h_index": 0
+  },
+  {
+    "id": "buddhika-suraweera",
+    "name": "Buddhika Suraweera",
+    "openalex_id": "A5004430906",
+    "title": "Lecturer",
+    "department": "Business Management",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-08T18:05:17.032Z",
+    "works_count": 5,
+    "cited_by_count": 8,
+    "h_index": 2
   }
 ]
