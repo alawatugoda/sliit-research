@@ -182,10 +182,14 @@ function classifyWork(w) {
   return 'other';
 }
 
+let filterYear = null; // set from ?year= param
+
 async function init() {
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
   if (!id) { showError('No member specified.'); return; }
+
+  filterYear = params.get('year') ? parseInt(params.get('year')) : null;
 
   let members = [];
   try {
@@ -221,6 +225,12 @@ async function loadPublications() {
     updateProfileStats();
     document.getElementById('tabBar').style.display = 'flex';
     document.getElementById('controlsArea').style.display = 'flex';
+    // If ?year= param set, switch to By Year tab and select that year
+    if (filterYear) {
+      switchTab('year');
+      const sel = document.getElementById('yearFilter');
+      if (sel) { sel.value = String(filterYear); }
+    }
     applyFilter();
   } catch(e) {
     document.getElementById('mainContent').innerHTML = `
