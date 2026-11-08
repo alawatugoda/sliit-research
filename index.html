@@ -267,7 +267,7 @@ async function loadYearView() {
       const works = await fetchMemberWorks(m.openalex_id, m.name);
       allWorks = allWorks.concat(works);
     } catch(e) { /* skip on error */ }
-    if (i < withId.length - 1) await new Promise(r => setTimeout(r, 500)); // 500ms between members
+    if (i < withId.length - 1) await new Promise(r => setTimeout(r, 1500)); // 1.5s between members
   }
 
   if (!allWorks.length) {
@@ -311,24 +311,43 @@ async function loadYearView() {
     ${html}`;
 }
 
+const CACHE_TTL_IDX = 24 * 60 * 60 * 1000;
+function idxCacheGet(key) {
+  try {
+    const raw = localStorage.getItem('oa_idx_' + key);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL_IDX) { localStorage.removeItem('oa_idx_' + key); return null; }
+    return data;
+  } catch { return null; }
+}
+function idxCacheSet(key, data) {
+  try { localStorage.setItem('oa_idx_' + key, JSON.stringify({ ts: Date.now(), data })); } catch {}
+}
+
 async function fetchMemberWorks(oaId, name) {
-  const url = `https://api.openalex.org/works?filter=author.id:${oaId}&per-page=100&select=id,display_name,publication_year,type,primary_location,cited_by_count,doi,authorships,biblio,open_access&mailto=research@sliit.lk`;
+  const cached = idxCacheGet(oaId);
+  if (cached) return cached;
+
+  const url = `https://api.openalex.org/works?filter=author.id:${oaId}&per-page=25&select=id,display_name,publication_year,type,primary_location,cited_by_count,doi,authorships,biblio,open_access&mailto=alawatugoda@eng.pdn.ac.lk`;
   let page = 1, results = [];
+  await new Promise(r => setTimeout(r, 1000)); // initial delay
   while(true) {
     let r;
-    // retry up to 3 times on 429
-    for (let attempt = 0; attempt < 3; attempt++) {
+    const delays = [2000, 5000, 10000];
+    for (let attempt = 0; attempt <= delays.length; attempt++) {
+      if (attempt > 0) await new Promise(res => setTimeout(res, delays[attempt-1]));
       r = await fetch(`${url}&page=${page}`);
-      if (r.status === 429) await new Promise(res => setTimeout(res, 2000 * (attempt+1)));
-      else break;
+      if (r.status !== 429) break;
     }
     if (!r.ok) break;
     const data = await r.json();
     results = results.concat(data.results || []);
     if (results.length >= (data.meta?.count||0) || !(data.results?.length)) break;
     page++; if (page > 10) break;
-    await new Promise(res => setTimeout(res, 300));
+    await new Promise(res => setTimeout(res, 1500));
   }
+  idxCacheSet(oaId, results);
   return results;
 }
 
