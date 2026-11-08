@@ -198,11 +198,24 @@ async function init() {
   document.title = member.name + ' — SLIIT KandyUni Research';
   renderProfile();
 
+  // Check cache first — if cached, load immediately; otherwise show Load button
+  const cached = cacheGet(member.openalex_id);
+  if (cached) {
+    await loadPublications();
+  } else {
+    document.getElementById('mainContent').innerHTML = `
+      <div style="padding:32px 0;text-align:center;">
+        <p style="color:var(--fg-muted);margin-bottom:16px;font-size:.95rem;">Publications are loaded from OpenAlex API.</p>
+        <button onclick="loadPublications()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:12px 28px;font-size:.95rem;font-weight:600;cursor:pointer;">Load Publications</button>
+      </div>`;
+  }
+}
+
+async function loadPublications() {
   document.getElementById('mainContent').innerHTML = '<div class="spinner"></div>';
   try {
     const works = await fetchAllWorks(member.openalex_id);
     allWorks = works.sort((a,b) => (b.publication_year||0) - (a.publication_year||0));
-    // Keep only journal + conference papers
     jcWorks = allWorks.filter(w => classifyWork(w) !== 'other');
     buildYearFilter();
     updateProfileStats();
@@ -210,7 +223,11 @@ async function init() {
     document.getElementById('controlsArea').style.display = 'flex';
     applyFilter();
   } catch(e) {
-    document.getElementById('mainContent').innerHTML = `<div class="error-msg">Could not load publications: ${esc(e.message)}</div>`;
+    document.getElementById('mainContent').innerHTML = `
+      <div class="error-msg">
+        Could not load publications: ${esc(e.message)}<br>
+        <button onclick="loadPublications()" style="margin-top:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:.88rem;font-weight:600;cursor:pointer;">Try Again</button>
+      </div>`;
   }
 }
 
