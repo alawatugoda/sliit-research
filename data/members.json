@@ -336,5 +336,19 @@
     "works_count": 7,
     "cited_by_count": 62,
     "h_index": 3
+  },
+  {
+    "id": "yamuna-wickramasinghe-mw7vg3ui",
+    "name": "Yamuna Wickramasinghe",
+    "openalex_id": "A5159551438",
+    "title": "Assistant Lecturer",
+    "department": "Business Managemant",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-08T13:32:09.260Z",
+    "works_count": 1,
+    "cited_by_count": 0,
+    "h_index": 0,
+    "display_name_from_api": "Yamuna Wickramasinghe"
   }
 ]
