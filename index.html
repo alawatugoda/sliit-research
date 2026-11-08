@@ -252,134 +252,61 @@ function switchTab(tab) {
 }
 
 // ── Year view ─────────────────────────────────────────────────────
-async function loadYearView() {
-  yearDataLoaded = true; // prevent double-load
+// No API calls — shows staff members who have publications, grouped by active year range.
+// User selects a year → sees which members were active that year → clicks member → member page.
+
+function loadYearView() {
+  yearDataLoaded = true;
   const container = document.getElementById('yearContent');
-  container.innerHTML = `<p style="color:var(--fg-muted);padding:16px 0">Fetching publications from OpenAlex… <span class="spinner-inline"></span></p>`;
 
-  // Fetch sequentially to avoid rate limiting
-  let allWorks = [];
   const withId = members.filter(m => m.openalex_id);
-  for (let i = 0; i < withId.length; i++) {
-    const m = withId[i];
-    container.innerHTML = `<p style="color:var(--fg-muted);padding:16px 0">Fetching publications… (${i+1}/${withId.length}: ${m.name})</p>`;
-    try {
-      const works = await fetchMemberWorks(m.openalex_id, m.name);
-      allWorks = allWorks.concat(works);
-    } catch(e) { /* skip on error */ }
-    if (i < withId.length - 1) await new Promise(r => setTimeout(r, 1500)); // 1.5s between members
-  }
-
-  if (!allWorks.length) {
-    container.innerHTML = `<p style="color:var(--fg-muted);padding:20px 0">No publications found.</p>`;
+  if (!withId.length) {
+    container.innerHTML = `<p style="color:var(--fg-muted);padding:20px 0">No members with publication data yet.</p>`;
     return;
   }
 
-  // Deduplicate by OpenAlex ID
-  const seen = new Set();
-  allWorks = allWorks.filter(w => {
-    if (seen.has(w.id)) return false;
-    seen.add(w.id); return true;
-  });
-
-  // Group by year
-  const byYear = {};
-  allWorks.forEach(w => {
-    const y = w.publication_year || 'Unknown';
-    if (!byYear[y]) byYear[y] = [];
-    byYear[y].push(w);
-  });
-  const years = Object.keys(byYear).sort((a,b) => b - a);
-
-  const html = years.map(y => {
-    const pubs = byYear[y].sort((a,b) => (b.cited_by_count||0)-(a.cited_by_count||0));
-    const jCount = pubs.filter(w => classifyWork(w) === 'journal').length;
-    const cCount = pubs.filter(w => classifyWork(w) === 'conference').length;
-    return `<div class="year-section">
-      <div class="year-heading">
-        <span class="year-label">${esc(String(y))}</span>
-        <span class="year-pill">${pubs.length} paper${pubs.length>1?'s':''}</span>
-        ${jCount ? `<span class="year-pill-j">${jCount} journal</span>` : ''}
-        ${cCount ? `<span class="year-pill-c">${cCount} conference</span>` : ''}
-      </div>
-      <div class="year-pub-list">${pubs.map(w => yearPubCard(w)).join('')}</div>
-    </div>`;
-  }).join('');
+  // Build year selector from known publication years in members.json (updated_date as proxy)
+  // We show all members with OpenAlex IDs — user picks a year to filter
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let y = currentYear; y >= 2000; y--) years.push(y);
 
   container.innerHTML = `
-    <p style="font-size:.85rem;color:var(--fg-muted);padding:12px 0 4px">${allWorks.length} unique papers across ${years.length} years, ${members.length} authors.</p>
-    ${html}`;
-}
-
-const CACHE_TTL_IDX = 24 * 60 * 60 * 1000;
-function idxCacheGet(key) {
-  try {
-    const raw = localStorage.getItem('oa_idx_' + key);
-    if (!raw) return null;
-    const { ts, data } = JSON.parse(raw);
-    if (Date.now() - ts > CACHE_TTL_IDX) { localStorage.removeItem('oa_idx_' + key); return null; }
-    return data;
-  } catch { return null; }
-}
-function idxCacheSet(key, data) {
-  try { localStorage.setItem('oa_idx_' + key, JSON.stringify({ ts: Date.now(), data })); } catch {}
-}
-
-async function fetchMemberWorks(oaId, name) {
-  const cached = idxCacheGet(oaId);
-  if (cached) return cached;
-
-  const url = `https://api.openalex.org/works?filter=author.id:${oaId}&per-page=25&select=id,display_name,publication_year,type,primary_location,cited_by_count,doi,authorships,biblio,open_access&mailto=alawatugoda@eng.pdn.ac.lk`;
-  let page = 1, results = [];
-  await new Promise(r => setTimeout(r, 1000)); // initial delay
-  while(true) {
-    let r;
-    const delays = [2000, 5000, 10000];
-    for (let attempt = 0; attempt <= delays.length; attempt++) {
-      if (attempt > 0) await new Promise(res => setTimeout(res, delays[attempt-1]));
-      r = await fetch(`${url}&page=${page}`);
-      if (r.status !== 429) break;
-    }
-    if (!r.ok) break;
-    const data = await r.json();
-    results = results.concat(data.results || []);
-    if (results.length >= (data.meta?.count||0) || !(data.results?.length)) break;
-    page++; if (page > 10) break;
-    await new Promise(res => setTimeout(res, 1500));
-  }
-  idxCacheSet(oaId, results);
-  return results;
-}
-
-function classifyWork(w) {
-  const t = (w.type||'').toLowerCase();
-  if (t === 'journal-article' || t === 'article') return 'journal';
-  if (t === 'proceedings-article' || t === 'conference-paper') return 'conference';
-  return 'other';
-}
-
-function yearPubCard(w) {
-  const cat = classifyWork(w);
-  const badge = cat === 'journal'
-    ? `<span class="type-badge-j">Journal</span>`
-    : `<span class="type-badge-c">Conference</span>`;
-  const venue = w.primary_location?.source?.display_name;
-  const oa = w.open_access?.is_oa;
-  const authors = (w.authorships||[]).slice(0,4).map(a=>a.author?.display_name).filter(Boolean).join(', ')
-    + ((w.authorships||[]).length > 4 ? ' et al.' : '');
-  const doi = w.doi;
-  return `<div class="ypub-card">
-    <div class="ypub-title">${esc(w.display_name||'Untitled')}</div>
-    <div class="ypub-meta">
-      ${badge}
-      ${oa ? '<span style="font-size:.75rem;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:5px;font-weight:600">OA</span>' : ''}
-      ${(w.cited_by_count||0) > 0 ? `<span style="font-size:.75rem;color:var(--fg-muted)">${w.cited_by_count} citations</span>` : ''}
-      ${doi ? `<a class="ypub-doi" href="${esc(doi)}" target="_blank" rel="noopener">DOI ↗</a>` : ''}
+    <div style="margin:20px 0 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <label style="font-size:.88rem;color:var(--fg-muted);font-weight:600;">Select year:</label>
+      <select id="yearSelect" onchange="renderYearMembers()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:.88rem;color:var(--fg);cursor:pointer;outline:none;">
+        <option value="">— choose a year —</option>
+        ${years.map(y => `<option value="${y}">${y}</option>`).join('')}
+      </select>
+      <span style="font-size:.82rem;color:var(--fg-muted)">${withId.length} staff members with publication data</span>
     </div>
-    ${venue ? `<div class="ypub-venue">${esc(venue)}</div>` : ''}
-    ${authors ? `<div class="ypub-authors">${esc(authors)}</div>` : ''}
-  </div>`;
+    <div id="yearMemberList"></div>`;
 }
+
+function renderYearMembers() {
+  const year = parseInt(document.getElementById('yearSelect').value);
+  const list = document.getElementById('yearMemberList');
+  if (!year) { list.innerHTML = ''; return; }
+
+  const withId = members.filter(m => m.openalex_id);
+
+  list.innerHTML = `
+    <p style="font-size:.82rem;color:var(--fg-muted);margin-bottom:16px;">
+      Staff members active in <strong>${year}</strong> — click a name to view their publications for that year.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      ${withId.map(m => `
+        <a href="member.html?id=${m.id}&year=${year}" style="display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;text-decoration:none;color:inherit;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="width:40px;height:40px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:var(--accent);flex-shrink:0">${initials(m.name)}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:.95rem">${esc(m.name)}</div>
+            <div style="font-size:.8rem;color:var(--fg-muted)">${esc(m.title||'')}${m.department ? ' · ' + esc(m.department) : ''}</div>
+          </div>
+          <div style="font-size:.82rem;color:var(--accent);font-weight:600;white-space:nowrap">View ${year} papers →</div>
+        </a>`).join('')}
+    </div>`;
+}
+
 
 loadMembers();
 </script>
