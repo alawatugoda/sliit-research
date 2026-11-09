@@ -414,5 +414,18 @@
     "works_count": 3,
     "cited_by_count": 0,
     "h_index": 0
+  },
+  {
+    "id": "lakshima-mahanayake",
+    "name": "Lakshima Mahanayake",
+    "openalex_id": "A5095837615",
+    "title": "Lecturer",
+    "department": "Computing",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-09T06:44:13.734Z",
+    "works_count": 2,
+    "cited_by_count": 1,
+    "h_index": 1
   }
 ]
