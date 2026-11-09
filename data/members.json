@@ -427,5 +427,18 @@
     "works_count": 2,
     "cited_by_count": 1,
     "h_index": 1
+  },
+  {
+    "id": "k-m-m-c-b-kulathunga",
+    "name": "K.M.M.C.B Kulathunga",
+    "openalex_id": "A5057725147",
+    "title": "Professor",
+    "department": "Business Management",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-09T17:47:45.957Z",
+    "works_count": 16,
+    "cited_by_count": 1015,
+    "h_index": 7
   }
 ]
