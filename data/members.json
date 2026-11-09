@@ -401,5 +401,18 @@
     "works_count": 2,
     "cited_by_count": 3,
     "h_index": 1
+  },
+  {
+    "id": "anuththara-ekanayake",
+    "name": "Anuththara Ekanayake",
+    "openalex_id": "A5128875827",
+    "title": "Lecturer",
+    "department": "Computing",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-09T06:43:09.120Z",
+    "works_count": 3,
+    "cited_by_count": 0,
+    "h_index": 0
   }
 ]
