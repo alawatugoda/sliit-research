@@ -7,7 +7,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:42:52.386Z",
+    "last_synced": "2026-11-09T08:45:26.084Z",
     "works_count": 15,
     "cited_by_count": 129,
     "h_index": 6
@@ -20,10 +20,10 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": null,
-    "works_count": null,
-    "cited_by_count": null,
-    "h_index": null
+    "last_synced": "2026-11-09T08:45:26.842Z",
+    "works_count": 55,
+    "cited_by_count": 645,
+    "h_index": 13
   },
   {
     "id": "chathurika-koswatte",
@@ -33,7 +33,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:42:54.659Z",
+    "last_synced": "2026-11-09T08:45:27.594Z",
     "works_count": 13,
     "cited_by_count": 71,
     "h_index": 5
@@ -46,7 +46,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:42:55.917Z",
+    "last_synced": "2026-11-09T08:45:28.439Z",
     "works_count": 1,
     "cited_by_count": 10,
     "h_index": 1
@@ -59,7 +59,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:42:56.659Z",
+    "last_synced": "2026-11-09T08:45:29.197Z",
     "works_count": 1,
     "cited_by_count": 2,
     "h_index": 1
@@ -72,7 +72,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:42:57.438Z",
+    "last_synced": "2026-11-09T08:45:29.989Z",
     "works_count": 3,
     "cited_by_count": 1,
     "h_index": 1
@@ -85,7 +85,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:42:58.173Z",
+    "last_synced": "2026-11-09T08:45:31.258Z",
     "works_count": 2,
     "cited_by_count": 4,
     "h_index": 1
@@ -137,7 +137,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:42:58.917Z",
+    "last_synced": "2026-11-09T08:45:32.629Z",
     "works_count": 3,
     "cited_by_count": 6,
     "h_index": 2
@@ -150,7 +150,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:42:59.733Z",
+    "last_synced": "2026-11-09T08:45:33.397Z",
     "works_count": 1,
     "cited_by_count": 1,
     "h_index": 1
@@ -215,7 +215,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:00.469Z",
+    "last_synced": "2026-11-09T08:45:34.275Z",
     "works_count": 2,
     "cited_by_count": 6,
     "h_index": 1
@@ -228,7 +228,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:01.197Z",
+    "last_synced": "2026-11-09T08:45:35.045Z",
     "works_count": 2,
     "cited_by_count": 4,
     "h_index": 1
@@ -267,7 +267,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:02.919Z",
+    "last_synced": "2026-11-09T08:45:35.862Z",
     "works_count": 1,
     "cited_by_count": 0,
     "h_index": 0
@@ -280,7 +280,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:03.927Z",
+    "last_synced": "2026-11-09T08:45:36.664Z",
     "works_count": 1,
     "cited_by_count": 0,
     "h_index": 0
@@ -319,7 +319,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:05.446Z",
+    "last_synced": "2026-11-09T08:45:37.463Z",
     "works_count": 1,
     "cited_by_count": 0,
     "h_index": 0
@@ -332,7 +332,7 @@
     "department": "Business Management",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:06.934Z",
+    "last_synced": "2026-11-09T08:45:38.234Z",
     "works_count": 7,
     "cited_by_count": 62,
     "h_index": 3
@@ -345,7 +345,7 @@
     "department": "Business Management",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:07.918Z",
+    "last_synced": "2026-11-09T08:45:39.004Z",
     "works_count": 1,
     "cited_by_count": 0,
     "h_index": 0
@@ -358,7 +358,7 @@
     "department": "Business Management",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:08.875Z",
+    "last_synced": "2026-11-09T08:45:39.755Z",
     "works_count": 2,
     "cited_by_count": 5,
     "h_index": 1
@@ -371,7 +371,7 @@
     "department": "Business Management",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:09.911Z",
+    "last_synced": "2026-11-09T08:45:40.516Z",
     "works_count": 1,
     "cited_by_count": 0,
     "h_index": 0
@@ -384,7 +384,7 @@
     "department": "Business Management",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:10.885Z",
+    "last_synced": "2026-11-09T08:45:41.263Z",
     "works_count": 5,
     "cited_by_count": 8,
     "h_index": 2
@@ -397,7 +397,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:11.902Z",
+    "last_synced": "2026-11-09T08:45:42.033Z",
     "works_count": 2,
     "cited_by_count": 3,
     "h_index": 1
@@ -410,7 +410,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:12.912Z",
+    "last_synced": "2026-11-09T08:45:42.807Z",
     "works_count": 3,
     "cited_by_count": 0,
     "h_index": 0
@@ -423,7 +423,7 @@
     "department": "Computing",
     "email": "",
     "orcid": null,
-    "last_synced": "2026-11-09T08:43:13.940Z",
+    "last_synced": "2026-11-09T08:45:43.563Z",
     "works_count": 2,
     "cited_by_count": 1,
     "h_index": 1
