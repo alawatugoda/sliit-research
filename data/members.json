@@ -388,5 +388,18 @@
     "works_count": 5,
     "cited_by_count": 8,
     "h_index": 2
+  },
+  {
+    "id": "erandi-de-silva",
+    "name": "Erandi De Silva",
+    "openalex_id": "A5027585570",
+    "title": "Lecturer",
+    "department": "Computing",
+    "email": "",
+    "orcid": null,
+    "last_synced": "2026-11-09T06:40:06.103Z",
+    "works_count": 2,
+    "cited_by_count": 3,
+    "h_index": 1
   }
 ]
